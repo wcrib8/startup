@@ -10,7 +10,13 @@ Are you a recently returned missionary? Are you wanting to get into the dating s
 
 ## Key Features
 
-
+1. secure login to a personal account
+2. ability for user to add targets and friends
+3. retain information on different targets
+4. different display pages
+5. stats of friends
+6. top date suggestions
+7. key indicators are automatically adjusted
 
 ## Technologies
 
