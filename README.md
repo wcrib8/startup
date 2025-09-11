@@ -22,12 +22,12 @@ Are you a recently returned missionary? Are you wanting to get into the dating s
 
 PMG Dating makes use of all the following technologies:
 
-- HTML:
-- CSS:
-- React:
-- Service:
-- DB/Login:
-- WebSocket: 
+- **HTML**:
+- **CSS**:
+- **React**:
+- **Service**:
+- **DB/Login**:
+- **WebSocket**: 
 
 [My Notes](notes.md)
 
