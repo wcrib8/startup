@@ -22,12 +22,12 @@ Are you a recently returned missionary? Are you wanting to get into the dating s
 
 PMG Dating makes use of all the following technologies:
 
-- **HTML** :
-- **CSS** :
-- **React** :
-- **Service** :
-- **DB/Login** :
-- **WebSocket** : 
+- **HTML** :  Use of HTML for page structure, will implement 3 or more pages, one for login, one for key indicators, one for target tracking.
+- **CSS** :  Make a user attractive design, create icons for targets and key indicators.
+- **React** :  provides different pages, login, toggle between indicators and tracking pages. Also helps with displaying proper icons and stats, displaying friends stats and suggestions.
+- **Service** :  Backend endpoints assist with storing info on target tracking, updating info and indicators, retrieving info and suggestions.
+- **DB/Login** :  Store users and their account in the database. require authentication to access info and interact with assets.
+- **WebSocket** :  Stats and suggestions are shared to friends.
 
 [My Notes](notes.md)
 
