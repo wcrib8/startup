@@ -1,6 +1,6 @@
-## PMG Dating
+# PMG Dating
 
-# Elevator Pitch
+## Elevator Pitch
 
 Are you a recently returned missionary? Are you wanting to get into the dating scene, but not exactly sure where to improve your game? Check out PMG Dating! This is the newest tool to help you track and improve your dating. Collaborate with friends to hype up their work, and share useful information! Nothing about dating is easy, but lets start making eternal progress today.
 
