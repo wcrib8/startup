@@ -6,7 +6,9 @@ Are you a recently returned missionary? Are you wanting to get into the dating s
 
 ## Design
 
+![startupDesign1 0](https://github.com/user-attachments/assets/2093f581-3cea-48c1-8f7a-f3f53ff125c4)
 
+![startupDesign2 0](https://github.com/user-attachments/assets/569a8c5e-d64e-43e7-98a5-04696d6d5888)
 
 ## Key Features
 
