@@ -20,6 +20,15 @@ Are you a recently returned missionary? Are you wanting to get into the dating s
 
 ## Technologies
 
+PMG Dating makes use of all the following technologies:
+
+- HTML:
+- CSS:
+- React:
+- Service:
+- DB/Login:
+- WebSocket: 
+
 [My Notes](notes.md)
 
 A brief description of the application here. just a little about me, I am Wolf Cribbs. boutta make a difference in the world for sure, but for now here we are learning what in the world Github is. if you are reading this its probably because I am now world famous. Hopefully its not for anything weird.
