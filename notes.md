@@ -12,6 +12,68 @@
 
 assignment 1 - github: I learned a lot about repositories, using git and github, and how useful it will be for my startup. Excited to be able to build my own projects and share them here.
 
+## Startup Step Notes
+
+### HTML Structure
+
+two major elements - structure and content to web app. 
+- body, header, footer, main, section, aside, p, table, ol/ul, div, spam
+Example:
+<body>
+  <p>Body</p>
+  <header>
+    <p>Header - <span>Span</span></p>
+    <nav>
+      Navigation
+      <div>Div</div>
+      <div>Div</div>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <p>Section</p>
+      <ul>
+        <li>List</li>
+        <li>List</li>
+        <li>List</li>
+      </ul>
+    </section>
+    <section>
+      <p>Section</p>
+      <table>
+        <tr>
+          <th>Table</th>
+          <th>Table</th>
+          <th>Table</th>
+        </tr>
+        <tr>
+          <td>table</td>
+          <td>table</td>
+          <td>table</td>
+        </tr>
+      </table>
+    </section>
+    <aside>
+      <p>Aside</p>
+    </aside>
+  </main>
+
+  <footer>
+    <div>Footer - <span>Span</span></div>
+  </footer>
+</body>
+
+
+
+## Other Assignment Notes
+
+
+## Class Notes
+
+
+
+
 
 
 # Example repo
