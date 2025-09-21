@@ -64,7 +64,17 @@ Example:
   </footer>
 </body>
 
+### HTML Input Elements
 
+HTML includes many ways to accept user data input. Form was the original essential method to change the application based on user input. With JavaScript that has become unnecessary, but form is sometimes still used.
+inputs have many types, can be determined wtih the type attribute.
+some attributes:
+- name
+- disabled
+- value
+- required
+
+attributes like these can confirm input data is correct or valid. This will be used for startup to ensure that input is valid, such as in authentication, during login.
 
 ## Other Assignment Notes
 
