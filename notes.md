@@ -19,6 +19,7 @@ assignment 1 - github: I learned a lot about repositories, using git and github,
 two major elements - structure and content to web app. 
 - body, header, footer, main, section, aside, p, table, ol/ul, div, spam
 Example:
+```
 <body>
   <p>Body</p>
   <header>
@@ -63,7 +64,7 @@ Example:
     <div>Footer - <span>Span</span></div>
   </footer>
 </body>
-
+```
 ### HTML Input Elements
 
 HTML includes many ways to accept user data input. Form was the original essential method to change the application based on user input. With JavaScript that has become unnecessary, but form is sometimes still used.
@@ -75,6 +76,28 @@ some attributes:
 - required
 
 attributes like these can confirm input data is correct or valid. This will be used for startup to ensure that input is valid, such as in authentication, during login.
+
+### HTML Media Elements
+
+elements represent media:
+- img
+- audio
+- video
+- svg (contain code to render an animated image)
+- canvas (contain code to render an animated image)
+
+media tags take a URL as an attribute. There is full path for URLs and relative path, helps to avoid adjusting all external page references.
+
+adding an image code:
+```<img alt="mountain landscape" src="https://images.pexels.com/photos/164170/pexels-photo-164170.jpeg" />```
+
+audio code:
+```<audio controls src="testAudio.mp3"></audio>```
+
+video code:
+``` <video controls width="300" crossorigin="anonymous">  <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" /></video> ```
+
+svg and canva allow you to create images within html. 
 
 ## Other Assignment Notes
 
