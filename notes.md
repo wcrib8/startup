@@ -127,7 +127,7 @@ svg and canva allow you to create images within html.
 
 ![260class4notes2](https://github.com/user-attachments/assets/82a72a21-50da-4c6b-a680-7f21c2008ea2)
 
-<img src="https://github.com/user-attachments/assets/82a72a21-50da-4c6b-a680-7f21c2008ea2" width="200"/>
+<img src="https://github.com/user-attachments/assets/82a72a21-50da-4c6b-a680-7f21c2008ea2" width="400"/>
 
 
 
