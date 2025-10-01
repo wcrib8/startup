@@ -2,6 +2,19 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 375px;
+  background-color: #121212;
+  color: #eee;
+  height: 100vh;
+  align-items: center;
+}
+
+.login-container {
+  background-color: #1e1e1e;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.7);
+  width: 100%;
+  max-width: 400px;
 }
 
 header {
