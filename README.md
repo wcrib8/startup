@@ -48,15 +48,15 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- [x] **HTML pages** - I created multiple html pages for index, key indicators, friends, contact, and about.
+- [x] **Proper HTML element usage** - I used the head and body format, including header main and footer within each html page, implementing ammy different forms and formats within each section.
+- [x] **Links** - I used links to connect the html pages, as well as connect to my github and add pictures.
+- [x] **Text** - I added text in paragraph form, line form, table form, using a variety if text.
+- [x] **3rd party API placeholder** - I have icons and picture placeholder space that will require a third party for data.
+- [x] **Images** - I included pictures in about html, and pictures will be added for friends list.
+- [x] **Login placeholder** - In index html there will need to be verification, currently has a login placeholder.
+- [x] **DB data placeholder** - Users will save info and data so that logging in they will still be able to see their data and info on friends, KIs will update.
+- [x] **WebSocket placeholder** - there will be a send or referral function, which will require web sockets.
 
 ## 🚀 CSS deliverable
 

@@ -12,7 +12,7 @@
 
 assignment 1 - github: I learned a lot about repositories, using git and github, and how useful it will be for my startup. Excited to be able to build my own projects and share them here.
 
-## Startup Step Notes
+## Learning Notes
 
 ### Amazon Web Services AWS - EC2
 
@@ -116,7 +116,21 @@ video code:
 
 svg and canva allow you to create images within html. 
 
-## Other Assignment Notes
+
+### CSS Frameworks
+
+As web developers built more web apps, similar patterns were put into open source code, making it available to everyone and speeding up time for web development. Many frameworks exist today, all have similar functionality, but add something different.
+
+Bootstrap is the most widely used framework. To use Bootstrap, a link to the package needs to be included in the head of html, giving access to bootstrap.
+
+
+## Startup Notes
+
+### HTML
+
+I learned a lot implementing HTML, learned all about the structure, including head and body, with the body including header, main, and footer. there are many different functions to display information, including `<p>` `<a>` `<table>` and many more. `<img width="" src="">` will display a picture, can also use `<a><href>` to add links.
+I can use the live server extension to see the changes I've applied, and also use inspect to debug and see what different code is doing on my page. 
+HTML builds the structure of the website, there is no interactivity, at least very limited, but makes a framework.
 
 
 ## Class Notes
