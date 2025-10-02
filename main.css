@@ -1,3 +1,9 @@
+/* * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+} */
+
 body {
   display: flex;
   flex-direction: column;
@@ -5,7 +11,16 @@ body {
   background-color: #212121;
   color: #eee;
   height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
   align-items: center;
+}
+
+.home-page .nav-item:nth-child(1),  
+.home-page .nav-item:nth-child(2),  
+.home-page .nav-item:nth-child(3) { 
+  display: none;
 }
 
 .pmg-title {
@@ -123,7 +138,6 @@ main {
   outline: none;
 }
 
-/* Style the Sign Up link as a button-link */
 a.btn-link {
   color: #0d6efd;
   text-decoration: none;
@@ -137,26 +151,77 @@ a.btn-link:focus {
   color: #0b5ed7;
 }
 
+.site-header,
+.site-footer {
+  width: 100%;
+  background-color: #331616;
+  padding: 1rem 0;
+}
+
+.site-header h1,
+.site-header .nav-link {
+  color: #bbb;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 footer {
   flex: 0 30px;
-  background-color: #331616;
+  color: #bbb;
+}
+
+.footer-link {
+  color: #bbb;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 1rem;
+  margin-left: auto; /* push it to the right if needed */
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
 }
 
 menu {
   flex: 1;
   display: flex;
-  /*  overwrite Bootstrap so the menu does not wrap */
   flex-direction: row !important;
   list-style: none;
+  justify-content: center;
+    padding-left: 0;
+    margin: 0;
 }
 
 .navbar-brand {
-  padding-left: 0.3em;
+  padding-left: 0;
   border-bottom: solid rgb(182, 182, 182) thin;
 }
 
 menu .nav-item {
-  padding: 0 0.3em;
+  padding: 0.3em;
+}
+
+menu.nav .nav-link {
+  color: #bbb;               
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+menu.nav .nav-link:hover,
+menu.nav .nav-link:focus {
+  color: #fff;               
+  text-decoration: underline; 
+  outline: none;
 }
 
 footer a {
