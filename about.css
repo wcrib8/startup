@@ -6,6 +6,12 @@ body {
   font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
+.nav-item:nth-child(2),  
+.nav-item:nth-child(3),  
+.nav-item:nth-child(4) { 
+  display: none;
+} 
+
 .site-header {
   width: 100%;
   background-color: #331616;
