@@ -1,0 +1,131 @@
+body.friend-info-page {
+  display: flex;
+  flex-direction: column;
+  min-width: 375px;
+  background-color: #212121;
+  color: #bbb;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.site-header,
+.site-footer {
+  width: 100%;
+  background-color: #331616;
+  padding: 1rem 0;
+  color: #bbb;
+}
+
+.pmg-title {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.back-link {
+  display: block;
+  text-align: center;
+  color: #bbb;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.back-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.friend-section h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+.info-block {
+  margin-bottom: 2rem;
+}
+
+.info-block h3 {
+  color: #ddd;
+  margin-bottom: 0.5rem;
+}
+
+.info-block ul {
+  list-style: disc inside;
+  margin: 0;
+  padding: 0.5rem 1rem;
+}
+
+.add-btn {
+  background-color: transparent;
+  color: #bbb;
+  border: 1px solid #555;
+  padding: 0.3rem 0.7rem;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+.add-btn:hover {
+  background-color: #331616;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  width: 100%; 
+  max-width: 200px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #b02a37;
+  outline: none;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-footer .container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: #bbb;
+  text-decoration: none;
+}
+
+.footer-link:hover {
+  color: #fff;
+  text-decoration: underline;
+}

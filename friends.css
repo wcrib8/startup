@@ -8,6 +8,12 @@ body.friends-page {
   flex-direction: column;
 }
 
+.friends-page .nav-item:nth-child(3),
+.friends-page .nav-item:nth-child(4),
+.friends-page .nav-item:nth-child(5) {
+    display: none;
+}
+
 .container {
   max-width: 1200px;
   margin: 0 auto;
