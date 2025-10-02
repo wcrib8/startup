@@ -5,60 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PMGDating</title>
     <link rel="icon" href="pmg_icon.png" />
+    <link rel="stylesheet" href="friends.css" />
 </head>
-<body>
-    <header>
-      <h1>Special Friends</h1>
-      <nav>
-        <menu>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="key_indicators.html">Key Indicators</a></li>
-          <li><a href="friends.html">Friends</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </menu>
-      </nav>
-      <hr />
+<body class="friends-page">
+    <header class="site-header">
+      <div class="container">
+        <h1 class="pmg-title">Special Friends</h1>
+        <nav>
+            <menu class="nav">
+                <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="key_indicators.html">Key Indicators</a></li>
+                <li class="nav-item"><a class="nav-link" href="friends.html">Friends</a></li>
+                <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+            </menu>
+        </nav>
+      </div>
     </header>
 
-    <main>
-        <table>
-            <thead>
+    <main class="container">
+        <table class="friends-table">
+            <tbody>
                 <tr>
-                    <th><span class="status-circle"></span></th>
-                    <th><a href="friend_info.html">Brighton</a></th>
+                    <td><span class="status-circle star"></span></td>
+                    <td><a href="friend_info.html">Brighton</a></td>
                 </tr>
-            </thead>
-            <br />
-            <thead>
                 <tr>
-                    <th><span class="status-circle"></span></th>
-                    <th><a href="friend_info.html">Olivia</a></th>
+                    <td><span class="status-circle progressing"></span></td>
+                    <td><a href="friend_info.html">Olivia</a></td>
                 </tr>
-            </thead>
-            <br />
-            <thead>
                 <tr>
-                    <th><span class="status-circle"></span></th>
-                    <th><a href="friend_info.html">Emma</a></th>
+                    <td><span class="status-circle progressing"></span></td>
+                    <td><a href="friend_info.html">Emma</a></td>
                 </tr>
-            </thead>
-            <br />
-            <thead>
                 <tr>
-                    <th><span class="status-circle"></span></th>
-                    <th><a href="friend_info.html">Isabela</a></th>
+                    <td><span class="status-circle interested"></span></td>
+                    <td><a href="friend_info.html">Isabela</a></td>
                 </tr>
-            </thead>
-            <br />
+            </tbody>
         </table>
+        <div class="add-friend-wrapper">
+          <button class="btn btn-primary">Add Friend</button>
+        </div>
     </main>
 
-    <footer>
-      <hr />
+    <footer class="site-footer">
+      <div class="container">
       <span class="text-reset">Wolf Cribbs</span>
       <span>&copy; 2025 PMGDating. All rights reserved.</span>
-      <a href="https://github.com/wcrib8/startup.git">GitHub</a>
+      <a href="https://github.com/wcrib8/startup.git" class="footer-link">GitHub</a>
+    </div>
     </footer>
 </body>
 </html>

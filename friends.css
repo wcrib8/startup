@@ -1,0 +1,187 @@
+body.friends-page {
+  background-color: #212121;
+  color: #bbb;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.site-header {
+  background-color: #331616;
+  padding: 1rem 0;
+  color: #bbb;
+}
+
+.pmg-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 0 0.5rem;
+}
+
+.nav {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.nav-item {
+  margin: 0 1rem;
+}
+
+.nav-link {
+  color: #bbb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
+
+main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 2rem 0;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.add-friend-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
+  padding: 1rem 0;
+}
+
+.friends-table {
+  max-width: 400px;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 auto;
+  margin-top: 2rem;
+}
+
+.friends-table td {
+  padding: 0.75rem 1rem;
+  vertical-align: middle;
+  font-size: 1.1rem;
+  border-bottom: 1px solid #444;
+}
+
+.friends-table a {
+  color: #bbb;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.friends-table a:hover,
+.friends-table a:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
+
+.status-circle {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  vertical-align: middle;
+  background-color: #bbb;
+}
+
+.status-circle.star {
+  width: 18px;
+  height: 18px;
+  background-color: #027e00;
+  margin-left: -2px;
+  clip-path: polygon(
+    50% 0%,
+    61% 35%,
+    98% 35%,
+    68% 57%,
+    79% 91%,
+    50% 70%,
+    21% 91%,
+    32% 57%,
+    2% 35%,
+    39% 35%
+  );
+  display: inline-block;
+  margin-right: 0.75rem;
+  vertical-align: middle;
+}
+
+.status-circle.progressing {
+  background-color: #027e00; 
+}
+
+.status-circle.interested {
+  background-color: #a8a310; 
+}
+
+.btn-primary {
+  background-color: #dc3545;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  width: 100%; 
+  max-width: 200px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #b02a37;
+  outline: none;
+}
+
+.site-footer {
+  background-color: #331616;
+  color: #bbb;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.footer-link {
+  color: #bbb;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: 1rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
