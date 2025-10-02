@@ -62,12 +62,12 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Header, footer, and main content body** - I did not complete this part of the deliverable.
-- [ ] **Navigation elements** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing** - I did not complete this part of the deliverable.
-- [ ] **Application elements** - I did not complete this part of the deliverable.
-- [ ] **Application text content** - I did not complete this part of the deliverable.
-- [ ] **Application images** - I did not complete this part of the deliverable.
+- [x] **Header, footer, and main content body** - I changed colors, design, and flex.
+- [x] **Navigation elements** - changed order so it was not just a bullet list, added hover elements and color change.
+- [x] **Responsive to window resizing** - added flex elements, window resize will still show all the important information and maintain functionality.
+- [x] **Application elements** - all elements of the application appear, including friends list, key indicators, their icons, and different pages
+- [x] **Application text content** - added style, font and colors to text.
+- [x] **Application images** - images were wrapped and fitted to frames, centered and flexed.
 
 ## 🚀 React part 1: Routing deliverable
 
