@@ -1,0 +1,104 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #212121;
+  color: #eee;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+.site-header {
+  width: 100%;
+  background-color: #331616;
+  padding: 1rem 0;
+  text-align: center;
+}
+
+.pmg-title {
+  color: #bbb;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+}
+
+.pmg-subtitle {
+  color: #ccc;
+  font-size: 1rem;
+  font-weight: 400;
+  margin-top: 0;
+}
+
+menu {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.nav-item {
+  padding: 0.5rem 1rem;
+}
+
+.nav-link {
+  color: #bbb;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover,
+.nav-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
+
+.content {
+  padding: 2rem 1rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.picture-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.picture-box img {
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.6);
+}
+
+.quote {
+  font-style: italic;
+  font-size: 1.1rem;
+  margin: 1.5rem 0;
+  text-align: center;
+  color: #ccc;
+}
+
+.site-footer {
+  width: 100%;
+  background-color: #331616;
+  color: #bbb;
+  text-align: center;
+  padding: 1rem 0;
+} 
+
+.footer-link {
+  color: #bbb;
+  text-decoration: none;
+  font-weight: 500;
+  margin-left: auto;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
