@@ -1,0 +1,144 @@
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body.key-indicators-page {
+  display: flex;
+  flex-direction: column;
+  min-width: 375px;
+  background-color: #212121;
+  color: #bbb;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  min-height: 100vh;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.key-indicators-page .nav-item:nth-child(2),
+.key-indicators-page .nav-item:nth-child(4),
+.key-indicators-page .nav-item:nth-child(5) {
+    display: none;
+}
+
+.site-header,
+.site-footer {
+  width: 100%;
+  background-color: #331616;
+  padding: 1rem 0;
+  color: #bbb;
+}
+
+.site-header .pmg-title {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin: 0 0 0.2em 0;
+  color: #bbb;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.site-header .nav {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.site-header .nav-item {
+  padding: 0 0.8rem;
+}
+
+.site-header .nav-link {
+  color: #bbb;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.site-header .nav-link:hover,
+.site-header .nav-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  flex-grow: 1;
+}
+
+main.container {
+  flex: 1 0 auto;
+  padding: 2rem 0;
+}
+
+.indicators-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #eee;
+}
+
+.indicators-table thead th {
+  border-bottom: 2px solid #bbb;
+  padding: 0.75rem;
+  text-align: left;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.indicators-table tbody td {
+  padding: 0.75rem;
+  border-bottom: 1px solid #444;
+  vertical-align: middle;
+  color: #ccc;
+}
+
+.indicators-table tbody tr:hover {
+  background-color: #331616;
+  color: #fff;
+}
+
+.rounded {
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.site-footer {
+  padding: 1rem 0;
+  width: 100%;
+  background-color: #331616;
+  color: #bbb
+}
+
+.site-footer .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: #bbb;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.footer-link:hover,
+.footer-link:focus {
+  color: #fff;
+  text-decoration: underline;
+  outline: none;
+}
+
