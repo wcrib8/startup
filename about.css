@@ -6,9 +6,9 @@ body {
   font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
-.nav-item:nth-child(2),  
-.nav-item:nth-child(3),  
-.nav-item:nth-child(4) { 
+body.about-page .nav-item:nth-child(2),  
+body.about-page .nav-item:nth-child(3),  
+body.about-page .nav-item:nth-child(4) { 
   display: none;
 } 
 
