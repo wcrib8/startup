@@ -132,6 +132,10 @@ I learned a lot implementing HTML, learned all about the structure, including he
 I can use the live server extension to see the changes I've applied, and also use inspect to debug and see what different code is doing on my page. 
 HTML builds the structure of the website, there is no interactivity, at least very limited, but makes a framework.
 
+### CSS
+
+I learned about the many functions and applications of CSS. these tools can be used to add font and style to text, change marigins, borders, and more. using frameworks allows you to access existing CSS content, such as bootstrapp and you can use their premade designs. I appreciate learning about flex, which helps to keep content within the window if it is resized, or rotated. to allow css to attach to the html, in the html code you need to add classes, which link to classes defined in css, pointing to set parameters for borders, fonts, colors, margins, or whatever is set in the class.
+
 
 ## Class Notes
 
