@@ -73,9 +73,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - I did not complete this part of the deliverable.
+- [x] **Bundled using Vite** - Dowloaded Vite, changed scripts, allowing me to start using React
+- [x] **Components** - took each main element from each html page to make react components
+- [x] **Router** - Establishing different routes allows me to just have one html page, and route to different components. Routes were implemented in app.jsx
 
 ## 🚀 React part 2: Reactivity deliverable
 
