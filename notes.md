@@ -136,6 +136,11 @@ HTML builds the structure of the website, there is no interactivity, at least ve
 
 I learned about the many functions and applications of CSS. these tools can be used to add font and style to text, change marigins, borders, and more. using frameworks allows you to access existing CSS content, such as bootstrapp and you can use their premade designs. I appreciate learning about flex, which helps to keep content within the window if it is resized, or rotated. to allow css to attach to the html, in the html code you need to add classes, which link to classes defined in css, pointing to set parameters for borders, fonts, colors, margins, or whatever is set in the class.
 
+### React Phase 1
+
+I learned about the efficiency of using React, being able to use routes and components so that html pages are kept to a minimum, can prepare for user interaction. Components are the main elements from my html pages. 
+
+
 
 ## Class Notes
 
