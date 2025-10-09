@@ -12,11 +12,11 @@
   font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
 
-.home-page .nav-item:nth-child(1),  
+/* .home-page .nav-item:nth-child(1),  
 .home-page .nav-item:nth-child(2),  
 .home-page .nav-item:nth-child(3) { 
   display: none;
-}
+} */
 
 .pmg-title {
   font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;

@@ -1,0 +1,5 @@
+.login .nav-item:nth-child(1),  
+.login .nav-item:nth-child(2),  
+.login .nav-item:nth-child(3) { 
+  display: none;
+}
