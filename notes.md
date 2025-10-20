@@ -123,6 +123,57 @@ As web developers built more web apps, similar patterns were put into open sourc
 
 Bootstrap is the most widely used framework. To use Bootstrap, a link to the package needs to be included in the head of html, giving access to bootstrap.
 
+### Javascript - Arrays
+
+arrays work very similar to lists, there are many functions and commands that can be used with arrays. Sample syntax:
+```
+function testAll(input, tester) {
+  return input.every(tester);
+}
+
+const result = testAll(["abc", "bbbbb"], (i) => i.length > 3);
+
+console.log(result);
+```
+
+### Javascript - Document Object Model (DOM)
+
+For everything in html there is a node, every title word whitespace all is connected to a node. They all comprise of a tree, all underneath the html root node. Nodes can be accessed by the parent node. if adding children, they must be fst be created on the DOM, then inserted to the parent by appending:
+```
+function insertChild(parentSelector, text) {
+  const newChild = document.createElement('div');
+  newChild.textContent = text;
+
+  const parentElement = document.querySelector(parentSelector);
+  parentElement.appendChild(newChild);
+}
+
+insertChild('#courses', 'new course');
+```
+to delete elements, call the removeChild function on the parent element.
+
+The DOM also allows you to inject entire blocks of HTML into an element. The following code finds the first div element in the DOM and replaces all the HTML it contains:
+```
+const el = document.querySelector('div');
+el.innerHTML = '<div class="injected"><b>Hello</b>!</div>';
+```
+injecting html with javascript is an easy way for hackers to find access. here is an example of how a hacker would get through an image element:
+```
+<img src="bogus.png" onerror="console.log('All your base are belong to us')" />
+```
+DOM elements can have a function that is called whenever an event occurs on an element. These are event listeners. Event listener called when clicked:
+```
+const submitDataEl = document.querySelector('#submitData');
+submitDataEl.addEventListener('click', function (event) {
+  console.log(event.type);
+});
+```
+
+### React - Reactivity
+
+Three major components for reactivity: `props`, `state`, and `render`. 
+
+
 
 ## Startup Notes
 
