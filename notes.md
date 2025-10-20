@@ -169,9 +169,171 @@ submitDataEl.addEventListener('click', function (event) {
 });
 ```
 
+`log` will output to the console. CSS parameters can also be included in log.
+timers will show how long a piece of code is executed, use `time` and `timeEnd` to wrap said code.
+To see how many times a block of code is called use the `count` function.
+
+
 ### React - Reactivity
 
 Three major components for reactivity: `props`, `state`, and `render`. 
+how React works:
+App: Top level component that manages the color state.
+ColorDisplay: Displays the currently selected color.
+ColorPicker: Displays the color and allows for the selection of a new color.
+
+using a `React.useState` function makes a state variable, this is how the value of an object changes with a change of state.
+ex: 
+```
+const [color, updateColor] = React.useState('#737AB0');
+```
+
+### React - Promises
+
+promise execution states:
+pending - Currently running asynchronously
+fulfilled - Completed successfully
+rejected - Failed to complete
+
+`setTimeout` is a function that can be used to delay the execution of code. Example:
+```
+const delay = (msg, wait) => {
+  setTimeout(() => {
+    console.log(msg, wait);
+  }, 1000 * wait);
+};
+
+new Promise((resolve, reject) => {
+  // Code executing in the promise
+  for (let i = 0; i < 3; i++) {
+    delay('In promise', i);
+  }
+});
+
+// Code executing after the promise
+for (let i = 0; i < 3; i++) {
+  delay('After promise', i);
+}
+
+// OUTPUT:
+//   In promise 0
+//   After promise 0
+//   In promise 1
+//   After promise 1
+//   In promise 2
+//   After promise 2
+```
+Another Promise code that flips a coin, after delay there is a fifty fifty chance:
+```
+const coinToss = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    if (Math.random() > 0.5) {
+      resolve('success');
+    } else {
+      reject('error');
+    }
+  }, 10000);
+});
+```
+The promise object has three functions: then, catch, and finally. The then function is called if the promise is fulfilled, catch is called if the promise is rejected, and finally is always called after all the processing is completed.
+
+adding a 10 percent chance of the coin falling off the table to our coin toss code:
+```
+const coinToss = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    if (Math.random() > 0.1) {
+      resolve(Math.random() > 0.5 ? 'heads' : 'tails');
+    } else {
+      reject('fell off table');
+    }
+  }, 10000);
+});
+
+
+coinToss
+  .then((result) => console.log(`Coin toss result: ${result}`))
+  .catch((err) => console.log(`Error: ${err}`))
+  .finally(() => console.log('Toss completed'));
+
+// OUTPUT:
+//    Coin toss result: tails
+//    Toss completed
+```
+
+### React - Async/Await
+
+asynchronous functions are functions that allow a program to start a long term task without waiting for it to finish, it can run in the background and the rest of the application can continue to work.
+Await waits for a fulfilled promise condition, or throws an exception. heres an async/await version of above coin flip code instead of then, catch, finally:
+```
+try {
+  const result = await coinToss();
+  console.log(`Toss result ${result}`);
+} catch (err) {
+  console.error(`Error: ${err}`);
+} finally {
+  console.log(`Toss completed`);
+}
+```
+```
+function cow() {
+  return 'moo';
+}
+console.log(cow());
+// OUTPUT: moo
+
+async function cow() {
+  return 'moo';
+}
+console.log(cow());
+// OUTPUT: Promise {<fulfilled>: 'moo'}
+
+async function cow() {
+  return new Promise((resolve) => {
+    resolve('moo');
+  });
+}
+console.log(cow());
+// OUTPUT: Promise {<pending>}
+```
+Async keyword means a function returns a promise. 
+
+### Web Services - Fetch
+
+HTTP requests have changed the Web from static HTML pages (Web 1.0) to one of web applications (Web 2.0) that interact with the user. Today fetch API is the preferred way to make HTTP requests. Fetch takes a URL and returns a promise. The promise `then` function asynchronously takes a callback function. 
+The following example makes a fetch request to get and display an inspirational quote. If the request method is unspecified, it defaults to GET.
+```
+fetch('https://quote.cs260.click')
+  .then((response) => response.json())
+  .then((jsonResponse) => {
+    console.log(jsonResponse);
+  });
+```
+response:
+```
+{
+  author: 'Kyle Simpson',
+  quote: "There's nothing more permanent than a temporary hack."
+}
+```
+To do a POST request you populate the options parameter with the HTTP method and headers.
+```
+fetch('https://jsonplaceholder.typicode.com/posts', {
+  method: 'POST',
+  body: JSON.stringify({
+    title: 'test title',
+    body: 'test body',
+    userId: 1,
+  }),
+  headers: {
+    'Content-type': 'application/json; charset=UTF-8',
+  },
+})
+  .then((response) => response.json())
+  .then((jsonResponse) => {
+    console.log(jsonResponse);
+  });
+```
+
 
 
 
