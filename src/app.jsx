@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
-import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { Login } from './login/login';
 import { Contact } from './contact/contact';
 import { About } from './about/about';
@@ -13,23 +13,8 @@ import { Submit_contact } from './submit_contact/submit_contact';
 export default function App() {
   return (
     <BrowserRouter>
-        <div className="home-page">
-            <header className="site-header">
-                <div className="container">
-                <h1 className="pmg-title">Pursue Marital Goals</h1>
-                <p className="pmg-subtitle">Through Dating</p>
-                    <nav>
-                        <menu className="nav">
-                        <li className="nav-item"><NavLink className="nav-link text-light" to="">Login</NavLink></li>
-                        <li className="nav-item"><NavLink className="nav-link text-light" to="key_indicators">Key Indicators</NavLink></li>
-                        <li className="nav-item"><NavLink className="nav-link text-light" to="friends">Friends</NavLink></li>
-                        <li className="nav-item"><NavLink className="nav-link text-light" to="about">About</NavLink></li>
-                        <li className="nav-item"><NavLink className="nav-link text-light" to="contact">Contact</NavLink></li>
-                        </menu>
-                    </nav>
-                </div>
-            </header>
-
+        <div className="body">
+            <Header />
             <Routes>
                 <Route path='/' element={<Login />} exact />
                 <Route path='/key_indicators' element={<Key_indicators />} />
@@ -52,6 +37,129 @@ export default function App() {
     </BrowserRouter>
   );
 }
+
+function Header() {
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === '/';
+  const isAboutPage = location.pathname === '/about';
+  const isContactPage = location.pathname === '/contact';
+  const isSubmitContactPage = location.pathname === '/submit_contact';
+  const isKeyIndicatorsPage = location.pathname === '/key_indicators';
+  const isFriendsPage = location.pathname === '/friends';
+  const isFriendInfoPage = location.pathname === '/friend_info';
+
+  return (
+    <header className="site-header">
+      <div className="container">
+        <h1 className="pmg-title">Pursue Marital Goals</h1>
+        <p className="pmg-subtitle">Through Dating</p>
+        <nav>
+          <menu className="nav">
+            {isLoginPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/about">
+                    About
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/contact">
+                    Contact
+                  </NavLink>
+                </li>
+              </>
+            ) : isAboutPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/">
+                    Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/contact">
+                    Contact
+                  </NavLink>
+                </li>
+              </>
+            ) : isContactPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/">
+                    Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/about">
+                    About
+                  </NavLink>
+                </li>
+              </>
+            ) : isSubmitContactPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/">
+                    Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/about">
+                    About
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/contact">
+                    Contact
+                  </NavLink>
+                </li>
+                </>
+            ) : isKeyIndicatorsPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/">
+                    Back to Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/friends">
+                    Friends
+                  </NavLink>
+                </li>
+              </>
+            ) : isFriendsPage ? (
+                <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/">
+                    Back to Login
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/key_indicators">
+                        Key Indicators
+                    </NavLink>
+                </li>
+                </>
+            ) : isFriendInfoPage ? (
+                <>
+                <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/">
+                        Back to Login
+                    </NavLink>
+                </li>
+                <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/friends">
+                        Friends
+                    </NavLink>
+                </li>
+                </>
+            ) : null}
+          </menu>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
 
 function NotFound() {
   return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;
