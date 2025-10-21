@@ -6,7 +6,7 @@ export function Key_indicators() {
     <main className="container">
         <table className="indicators-table">
             <tr>
-                <td><img className="rounded" width="80px" src="new_contact_w.png" alt="New Contact"/></td>
+                <td><img className="rounded" width="80px" src="new_contact_w.jpg" alt="New Contact"/></td>
                 <td>New Contact</td>
                 <td>32</td>
             </tr>
