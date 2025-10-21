@@ -355,6 +355,39 @@ I learned about the efficiency of using React, being able to use routes and comp
 
 
 
+## Midterm Notes
+
+### review #1
+
+- In HTML, the <link> element is used to link external resources to your web page — most commonly, it links to external CSS stylesheets.
+- a div tag groups elements together and divides the page into sections
+- #title targets one specific matching id attribute element `<h1 id="title">Welcome</h1>`
+```
+#title {
+  color: blue;
+  text-align: center;
+}
+```
+  .grid targets any elements with matching `class` attribute:
+```
+<div class="grid">Grid 1</div>
+<div class="grid">Grid 2</div>
+
+.grid {
+  display: grid;
+  gap: 10px;
+}
+```
+- $${\color{green}content}$$ -> $${\color{red}padding}$$ (space inside box, surrounding content, takes background color) -> $${\color{blue}border}$$(visible edge surrounding padding) -> $${\color{orange}margin}$$ (space outside box)
+- `margin: 10px 20px 30px 40px;`, order: top, right, bottom, left
+  `margin: 10px 20px 30px;`, top, left/right, bottom
+  `margin: 10px 20px;`, top/bottom, left/right
+  `margin: 10px;`, all sides
+
+
+
+
+
 ## Class Notes
 
 <img src="https://github.com/user-attachments/assets/6e4898a9-191b-41aa-88d7-9a1d0b72de1f" width="400"/>
