@@ -360,7 +360,15 @@ I learned about the efficiency of using React, being able to use routes and comp
 ### review #1
 
 - In HTML, the <link> element is used to link external resources to your web page — most commonly, it links to external CSS stylesheets.
+- How would you display an image with a hyperlink in HTML? answer:
+  ```
+  <a href="https://example.com">
+  <img src="image.jpg" alt="Example image">
+  </a>
+  ```
+  <a> defines anchor, or link, <img> defines the image
 - a div tag groups elements together and divides the page into sections
+- when applying styles, . or # is used to specify specific classes or ids. if just div is used instead of .div, then the elements inside of div apply to all divs in the html.
 - #title targets one specific matching id attribute element `<h1 id="title">Welcome</h1>`
 ```
 #title {
@@ -378,11 +386,318 @@ I learned about the efficiency of using React, being able to use routes and comp
   gap: 10px;
 }
 ```
+- `.style.color` accesses the CSS `color` property of that element
 - $${\color{green}content}$$ -> $${\color{red}padding}$$ (space inside box, surrounding content, takes background color) -> $${\color{blue}border}$$(visible edge surrounding padding) -> $${\color{orange}margin}$$ (space outside box)
 - `margin: 10px 20px 30px 40px;`, order: top, right, bottom, left
   `margin: 10px 20px 30px;`, top, left/right, bottom
   `margin: 10px 20px;`, top/bottom, left/right
   `margin: 10px;`, all sides
+- showing arrow syntax for javascript
+```
+function multiply(a, b) {
+  return a * b;
+}
+
+const multiply = (a, b) => a * b;
+
+console.log(multiply(4, 5)); // Output: 20
+```
+- .map() applies a function to each element of an original array
+```
+const numbers = [2, 4, 6];
+const doubled = numbers.map(num => num * 2);
+console.log(doubled);
+```
+- ~getElementById("greetBtn") grabs the <button> element from the DOM.
+  ~addEventListener("click", ...) listens for a click event.
+  ~When clicked, it runs the arrow function, which logs "Hello, world!" to the console.
+  
+- ~The # in a selector in JS means “ID” (just like in CSS).
+  ~document.querySelector("#mainTitle") looks through the DOM and returns the first element with that ID.
+  ~Example HTML it would target:
+  `<h1 id="mainTitle">Welcome!</h1>`
+
+- <span> is an inline element by default. That means it does not start on a new line and only takes up as much width as its content.
+- `getElementById` : selects a single element by its id. ids are meant to be unique, returns **one element**
+- `querySelector` : selects the **first element** that matches a CSS selector:
+  ```
+  document.querySelector("#myId");  // by id
+  document.querySelector(".myClass");  // by class
+  document.querySelector("p");        // by tag
+  ```
+- html ordered (numbered) list tag: <ol> ;  html unordered (bulletted) list tag: <ul> ; html tag for first level heading: <h1>
+- `<!DOCTYPE html>` tells the browser that the document is an HTML5 document.
+- with switch syntax in JS, you need to add a break statement if you don't want later cases to also be outputted:
+```
+let grade = "B";
+
+switch (grade) {
+  case "A":
+    console.log("Excellent");
+  case "B":
+    console.log("Good");
+  case "C":
+    console.log("Average");
+  default:
+    console.log("Needs Improvement");
+}
+```
+  will output:
+```
+Good
+Average
+Needs Improvement
+```
+- correct JS syntax for making an object: `let person = { name: "Alice", age: 25 };`
+- you can add properties to objects:
+```
+let person = { name: "Alice", age: 25 };
+
+// Add a new property
+person.city = "Provo";
+
+console.log(person);
+// Output: { name: "Alice", age: 25, city: "Provo" }
+```
+- If you want to include JavaScript on an HTML page, which tag do you use?   `<script>`
+- JSON: (JavaScript Object Notation) A text-based format for storing and exchanging data. JSON is a lightweight, text-based data format that represents data as key-value pairs (similar to JavaScript objects). It is commonly used for sending data between a server and a client.
+- terminal commands:
+1 chmod
+
+Purpose: Changes the permissions of a file or directory.
+
+Example:
+
+`chmod 755 script.sh`
+
+
+Makes script.sh readable and executable by everyone, writable by the owner.
+
+-----> ./ is the command to run the file, or sh : `./script.sh`
+
+2️⃣ pwd
+
+Purpose: Prints the current working directory.
+
+Example:
+```
+pwd
+# Output: /home/user/Documents
+```
+3️⃣ cd
+
+Purpose: Changes the current directory.
+
+Example:
+
+`cd /home/user/Desktop`
+
+4️⃣ ls
+
+Purpose: Lists files and directories in the current directory.
+
+Example:
+```
+ls
+# Output: file1.txt  file2.txt  folder1
+```
+5️⃣ vim
+
+Purpose: Opens the Vim text editor to edit files in the terminal.
+
+Example:
+
+`vim notes.txt`
+
+6️⃣ nano
+
+Purpose: Opens the Nano text editor, a simpler terminal editor.
+
+Example:
+
+`nano notes.txt`
+
+7️⃣ mkdir
+
+Purpose: Creates a new directory.
+
+Example:
+
+`mkdir new_folder`
+
+8️⃣ mv
+
+Purpose: Moves or renames files/directories.
+
+Example:
+```
+mv oldname.txt newname.txt    # rename
+mv file.txt /home/user/Desktop/  # move
+```
+9️⃣ rm
+
+Purpose: Removes files or directories.
+
+Example:
+```
+rm file.txt           # remove a file
+rm -r old_folder/     # remove a directory recursively
+```
+1️⃣0️⃣ man
+
+Purpose: Displays the manual/help page for a command.
+
+Example:
+
+`man ls`
+
+1️⃣1️⃣ ssh
+
+Purpose: Connects to a remote server via Secure Shell (SSH).
+
+Example:
+
+`ssh user@remote-server.com`
+
+1️⃣2️⃣ ps
+
+Purpose: Shows currently running processes.
+
+Example:
+
+`ps aux`
+
+1️⃣3️⃣ wget
+
+Purpose: Downloads files from the internet via command line.
+
+Example:
+
+`wget https://example.com/file.zip`
+
+1️⃣4️⃣ sudo
+
+Purpose: Runs a command as superuser (administrator).
+
+Example:
+
+`sudo apt update`
+
+- Which of the following console command creates a remote shell session?    `ssh`
+  ssh stands for Secure Shell. It allows you to log in to a remote server securely and execute commands as if you were on that machine.
+- `ls` → lists files and directories.
+  `-l` → long format: shows detailed information like permissions, owner, group, size, and modification date.
+  `-a` → shows all files, including hidden files (those starting with a dot .).
+  Combined as `ls -la`, it produces a detailed list of all files, including hidden ones.
+- TLD: top-level domain
+- given domain name: banana.fruit.bozo.click:
+  Top-Level Domain (TLD): click → the last part of the domain.
+  Root Domain (second-level domain): bozo → the main domain registered under the TLD.
+  Subdomain: banana.fruit → any prefixes before the root domain.
+- To enable HTTPS, a website must have a TLS/SSL certificate (commonly called a web certificate). web certificate = necessary for HTTPS
+- An A record (Address record) maps a domain name directly to an IPv4 IP address. Example: `example.com → 192.0.2.1`
+  An A record cannot point to another A record directly. If you want a domain to alias another domain, you use a CNAME (Canonical Name) record instead.
+  Example of a CNAME:
+  ```
+  www.example.com → example.com
+  example.com → 192.0.2.1  (A record)
+  ```
+- Port 80 → HTTP (HyperText Transfer Protocol)
+  Port 443 → HTTPS (HTTP over TLS/SSL)
+  Port 22 → SSH (Secure Shell)
+- sample Promise code:
+```
+const promise = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("Success!");
+  }, 1000);
+});
+
+promise
+  .then((message) => {
+    console.log(message);
+    return "Next step";
+  })
+  .then((nextMessage) => {
+    console.log(nextMessage);
+  })
+  .catch((error) => {
+    console.log("Error:", error);
+  });
+```
+will output:
+Success!
+Next step
+
+A Promise is created that resolves with "Success!" after 1 second.
+`.then((message) => { ... })` runs when the Promise resolves, printing "Success!".
+Returning  `"Next step"` from the first `.then` passes it to the next `.then` in the chain.
+The second `.then` prints `"Next step"`.
+`.catch` is not triggered because there is no error.
+
+`.then` handles successful resolutions.
+Returning a value inside a `.then` passes it to the next `.then`.
+`.catch` only runs if the Promise rejects.
+
+
+### review #2
+
+example counter func onclick
+```
+document.getElementById("plus").onclick = () => {
+    count++
+    number.textContent = count
+```
+
+example html setup with JS file initialized:
+```
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title> Click Counter</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <form type="click" id="counterForm">
+            <p id="number">0</p>
+            <button type="button" id="plus">+</button>
+            <button type="button" id="minus">-</button>
+            <button type="button" id="minus5">-5</button>
+            <button type="button" id="plus5">+5</button>
+        </form>
+
+        <script src="counter.js"></script>
+    </body>
+</html>
+```
+
+example CSS
+```
+body{
+  font-family: Arial;
+  padding:20px;
+  background-color: grey;
+}
+#message{
+  font-weight: bold;
+}
+```
+
+Examle event listener code
+```
+const colors = document.getElementById('background')
+
+colors.addEventListener('change', () =>{
+    const color = colors.value;
+    console.log(color)
+    
+    document.body.style.background = color;
+    document.body.style.color = 'yellow'
+})
+```
+
 
 
 
