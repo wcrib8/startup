@@ -1,22 +1,62 @@
 import React from 'react';
 import './login.css';
+import { useNavigate } from 'react-router-dom';
+import { AuthState } from './auth_state';
 
-export function Login() {
+export function Login({ userName, authState, onAuthChange }) {
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const navigate = useNavigate();
+  const [isSignup, setIsSignup] = React.useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (email && password) {
+      localStorage.setItem('userName', email);
+      onAuthChange(email, AuthState.Authenticated);
+      navigate('/key_indicators');
+    }
+  };
+
   return (
     <main>
       <div className="login-container">
-        <form method="get" action="key_indicators.html">
-            <div className="mb-3">
-                <input type="email" name="email" className="form-control" placeholder="Email" required autocomplete="email" />
-            </div>
-            <div class="mb-4">
-                <input type="password" name="password" className="form-control" placeholder="Password" required autocomplete="current-password" />
-            </div>
-            <button className="btn btn-primary" type="submit" value="login">Login</button>
-            <div className="mt-3 text-center">
-              <p>Don't have an account? </p>
-              <button className="btn btn-secondary" type="submit" value="signup">Sign Up</button>
-            </div>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-3">
+            <input 
+              type="email" 
+              name="email" 
+              className="form-control" 
+              placeholder="Email" 
+              required 
+              autocomplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div class="mb-4">
+            <input 
+              type="password" 
+              name="password" 
+              className="form-control" 
+              placeholder="Password" 
+              required 
+              autocomplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" type="submit" value="login">Login</button>
+          <div className="mt-3 text-center">
+            <p>Don't have an account? </p>
+            <button 
+              className="btn btn-secondary" 
+              type="button" 
+              onClick={() => navigate('/signup')}
+            >
+              Sign Up
+            </button>
+          </div>
         </form>
       </div>
     </main>
