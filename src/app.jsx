@@ -11,17 +11,48 @@ import { Friend_info } from './friend_info/friend_info';
 import { Submit_contact } from './submit_contact/submit_contact';
 
 export default function App() {
+  const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
+  const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
+  const [authState, setAuthState] = React.useState(currentAuthState);
+
   return (
     <BrowserRouter>
         <div className="body">
             <Header />
             <Routes>
-                <Route path='/' element={<Login />} exact />
-                <Route path='/key_indicators' element={<Key_indicators />} />
-                <Route path='/friends' element={<Friends />} />
+                <Route
+                  path='/' 
+                  element={
+                    <Login
+                      userName={userName}
+                      authState={authState}
+                      onAuthChange={(userName, authState) => {
+                        setUserName(userName);       
+                        setAuthState(authState);
+                      }}
+                    />
+                  }
+                  exact
+                />
+                <Route 
+                  path="/signup" 
+                  element={
+                    <Signup 
+                      userName={userName}
+                      authState={authState}
+                      onAuthChange={(userName, authState) => {
+                        setUserName(userName);       
+                        setAuthState(authState);
+                      }} 
+                    />
+                  } 
+                  exact
+                />
+                <Route path='/key_indicators' element={<Key_indicators userName={userName} />} />
+                <Route path='/friends' element={<Friends userName={userName} />} />
                 <Route path='/about' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/friend_info' element={<Friend_info />} />
+                <Route path='/friend_info' element={<Friend_info userName={userName} />} />
                 <Route path='/submit_contact' element={<Submit_contact />} />
                 <Route path='*' element={<NotFound />} />
             </Routes>
@@ -42,6 +73,7 @@ function Header() {
   const location = useLocation();
 
   const isLoginPage = location.pathname === '/';
+  const isSignUpPage = location.pathname === '/signup';
   const isAboutPage = location.pathname === '/about';
   const isContactPage = location.pathname === '/contact';
   const isSubmitContactPage = location.pathname === '/submit_contact';
@@ -57,6 +89,19 @@ function Header() {
         <nav>
           <menu className="nav">
             {isLoginPage ? (
+              <>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/about">
+                    About
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link text-light" to="/contact">
+                    Contact
+                  </NavLink>
+                </li>
+              </>
+            ) : isSignUpPage ? (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link text-light" to="/about">
@@ -116,41 +161,65 @@ function Header() {
             ) : isKeyIndicatorsPage ? (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/">
+                  <NavLink 
+                    className="nav-link text-light" 
+                    to="/"
+                    onClick={() => {
+                      localStorage.removeItem('userName');
+                    }}
+                  >
                     Back to Login
                   </NavLink>
                 </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/friends">
-                    Friends
-                  </NavLink>
-                </li>
+                {authState === AuthState.Authenticated && (
+                  <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/friends">
+                      Friends
+                    </NavLink>
+                  </li>
+                )}
               </>
             ) : isFriendsPage ? (
                 <>
                 <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/">
+                  <NavLink 
+                    className="nav-link text-light" 
+                    to="/"
+                    onClick={() => {
+                      localStorage.removeItem('userName');
+                    }}
+                  >
                     Back to Login
                   </NavLink>
                 </li>
-                <li className="nav-item">
+                {authState === AuthState.Authenticated && (
+                  <li className="nav-item">
                     <NavLink className="nav-link text-light" to="/key_indicators">
-                        Key Indicators
+                      Key Indicators
                     </NavLink>
-                </li>
+                  </li>
+                )}
                 </>
             ) : isFriendInfoPage ? (
                 <>
                 <li className="nav-item">
-                    <NavLink className="nav-link text-light" to="/">
-                        Back to Login
-                    </NavLink>
+                  <NavLink 
+                    className="nav-link text-light" 
+                    to="/"
+                    onClick={() => {
+                      localStorage.removeItem('userName');
+                    }}
+                  >
+                    Back to Login
+                  </NavLink>
                 </li>
-                <li className="nav-item">
+                {authState === AuthState.Authenticated && (
+                  <li className="nav-item">
                     <NavLink className="nav-link text-light" to="/friends">
-                        Friends
+                      Friends
                     </NavLink>
-                </li>
+                  </li>
+                )}
                 </>
             ) : null}
           </menu>
