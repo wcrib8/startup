@@ -20,7 +20,7 @@ export default function App() {
   return (
     <BrowserRouter>
         <div className="body">
-            <Header />
+            <Header authState={authState}/>
             <Routes>
                 <Route
                   path='/' 
@@ -69,7 +69,7 @@ export default function App() {
   );
 }
 
-function Header() {
+function Header({ authState }) {
   const location = useLocation();
 
   const isLoginPage = location.pathname === '/';

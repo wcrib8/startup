@@ -191,3 +191,44 @@ main {
   text-decoration: underline;
   outline: none;
 }
+
+.modal {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #bbb;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  z-index: 1050;
+}
+
+.modal-dialog {
+  max-width: 400px;
+  width: 90%;
+  color: #bbb;
+}
+
+.modal-content {
+  background-color: #212121;
+  color: #bbb;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal input::placeholder {
+  color: #bbb;
+  opacity: .5;
+}
+
+.modal {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}

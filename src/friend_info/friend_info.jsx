@@ -4,7 +4,7 @@ import './friend_info.css';
 export function Friend_info() {
   return (
     <main className="container">
-        <section Name="friend-section">
+        <section className="friend-section">
         <h2>Brighton</h2>
 
         <div className="info-block">

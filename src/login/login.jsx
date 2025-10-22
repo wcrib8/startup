@@ -34,7 +34,7 @@ export function Login({ userName, authState, onAuthChange }) {
               onChange={(e) => setEmail(e.target.value)}
             />
           </div>
-          <div class="mb-4">
+          <div className="mb-4">
             <input 
               type="password" 
               name="password" 

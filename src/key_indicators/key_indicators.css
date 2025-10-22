@@ -16,12 +16,6 @@ body.key-indicators-page {
   box-sizing: border-box;
 }
 
-.key-indicators-page .nav-item:nth-child(2),
-.key-indicators-page .nav-item:nth-child(4),
-.key-indicators-page .nav-item:nth-child(5) {
-    display: none;
-}
-
 .site-header,
 .site-footer {
   width: 100%;
