@@ -3,12 +3,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import { Login } from './login/login';
+import { Signup } from './login/signup';
 import { Contact } from './contact/contact';
 import { About } from './about/about';
 import { Friends } from './friends/friends';
 import { Key_indicators } from './key_indicators/key_indicators';
 import { Friend_info } from './friend_info/friend_info';
 import { Submit_contact } from './submit_contact/submit_contact';
+import { AuthState } from './login/auth_state';
 
 export default function App() {
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
@@ -32,7 +34,6 @@ export default function App() {
                       }}
                     />
                   }
-                  exact
                 />
                 <Route 
                   path="/signup" 
@@ -46,7 +47,6 @@ export default function App() {
                       }} 
                     />
                   } 
-                  exact
                 />
                 <Route path='/key_indicators' element={<Key_indicators userName={userName} />} />
                 <Route path='/friends' element={<Friends userName={userName} />} />

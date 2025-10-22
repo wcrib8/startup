@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './login.css';
 import { useNavigate } from 'react-router-dom';
 
-import { AuthState } from '../auth_state';
+import { AuthState } from './auth_state';
 
 export function Signup({ onAuthChange }) {
   const [email, setEmail] = useState('');
@@ -22,7 +22,7 @@ export function Signup({ onAuthChange }) {
     <main>
       <div className="login-container">
         <form onSubmit={handleSignup}>
-          <h2 className="text-center mb-3">Sign Up</h2>
+          <h3 className="text-center mb-3">Sign Up</h3>
           <input
             type="email"
             className="form-control"
@@ -49,7 +49,7 @@ export function Signup({ onAuthChange }) {
             <button
               className="btn btn-secondary"
               type="button"
-              onClick={() => navigate('/login')}
+              onClick={() => navigate('/')}
             >
               Back to Login
             </button>

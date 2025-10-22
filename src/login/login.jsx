@@ -21,15 +21,15 @@ export function Login({ userName, authState, onAuthChange }) {
   return (
     <main>
       <div className="login-container">
-        <form onSubmit={handleSubmit}>
-          <div className="mb-3">
+        <form onSubmit={handleLogin}>
+          <div className="mb-4">
             <input 
               type="email" 
               name="email" 
               className="form-control" 
               placeholder="Email" 
               required 
-              autocomplete="email"
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -41,7 +41,7 @@ export function Login({ userName, authState, onAuthChange }) {
               className="form-control" 
               placeholder="Password" 
               required 
-              autocomplete="current-password"
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />

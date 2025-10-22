@@ -58,6 +58,11 @@ main {
   padding: 2rem;
 }
 
+.login-container input::placeholder {
+  color: #eee;
+  opacity: .5;
+}
+
 .login-container input.form-control,
 .login-container button {
   width: 100%;
