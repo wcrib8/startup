@@ -5,15 +5,26 @@ export function Key_indicators() {
     const [indicators, setIndicators] = useState([]);
 
     useEffect(() => {
-        const savedIndicators = JSON.parse(localStorage.getItem('keyIndicators')) || [
-            { label: 'New Contact', count: 0 },
-            { label: 'Meaningful Conversation', count: 0 },
-            { label: 'Date', count: 0 },
-            { label: 'Kiss', count: 0 },
-            { label: 'Vulnerable Moment', count: 0 },
-            { label: 'New Partner', count: 0 },
-        ];
-        setIndicators(savedIndicators);
+        const loadIndicators = () => {
+            const savedIndicators = JSON.parse(localStorage.getItem('keyIndicators')) || [
+                { label: 'New Contact', count: 0 },
+                { label: 'Meaningful Conversation', count: 0 },
+                { label: 'Date', count: 0 },
+                { label: 'Kiss', count: 0 },
+                { label: 'Vulnerable Moment', count: 0 },
+                { label: 'New Partner', count: 0 },
+            ];
+            setIndicators(savedIndicators);
+        };
+
+        loadIndicators();
+        window.addEventListener('storage', loadIndicators);
+        window.addEventListener('keyIndicatorsUpdated', loadIndicators);
+
+        return () => {
+            window.removeEventListener('storage', loadIndicators);
+            window.removeEventListener('keyIndicatorsUpdated', loadIndicators);
+        };
     }, []);
 
     return (

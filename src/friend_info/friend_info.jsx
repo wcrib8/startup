@@ -28,6 +28,39 @@ export function Friend_info() {
         timeline: [],
     });
 
+    const updateKeyIndicators = (type) => {
+        const stored = JSON.parse(localStorage.getItem('keyIndicators')) || [
+            { label: 'New Contact', count: 0 },
+            { label: 'Meaningful Conversation', count: 0 },
+            { label: 'Date', count: 0 },
+            { label: 'Kiss', count: 0 },
+            { label: 'Vulnerable Moment', count: 0 },
+            { label: 'New Partner', count: 0 },
+        ];
+
+        let updated = stored.map(ind => {
+            if (
+                (type === 'new_contact' && ind.label === 'New Contact') ||
+                (type === 'meaningful_conversation' && ind.label === 'Meaningful Conversation') ||
+                (type === 'date' && ind.label === 'Date') ||
+                (type === 'kiss' && ind.label === 'Kiss') ||
+                (type === 'vulnerable' && ind.label === 'Vulnerable Moment') ||
+                (type === 'new_partner' && ind.label === 'New Partner')
+            ) {
+                return { ...ind, count: ind.count + 1 };
+            }
+            return ind;
+        });
+
+        localStorage.setItem('keyIndicators', JSON.stringify(updated));
+
+        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+
+
+        console.log(`Updated key indicator: ${type}`);
+    };
+
+
     useEffect(() => {
         const savedFriends = JSON.parse(localStorage.getItem('friends')) || [];
         const friendIndex = parseInt(id, 10);
@@ -81,11 +114,6 @@ export function Friend_info() {
         setFriend(prev => {
             const updatedContacts = [...prev.contactInfo, newContact];
             const updatedFriend = { ...prev, contactInfo: updatedContacts };
-
-            if (!prev.hasCountedAsNewContact && updatedContacts.length > 0) {
-                updateKeyIndicators('new_contact'); 
-                updatedFriend.hasCountedAsNewContact = true;
-            }
 
             return updatedFriend;
         });
@@ -147,43 +175,6 @@ export function Friend_info() {
         setEditData(prev => ({ ...prev, progressPercent }));
     };
 
-    const updateKeyIndicators = (payload) => {
-        const savedIndicators = JSON.parse(localStorage.getItem('keyIndicators')) || [
-            { label: 'New Contact', count: 0 },
-            { label: 'Meaningful Conversation', count: 0 },
-            { label: 'Date', count: 0 },
-            { label: 'Kiss', count: 0 },
-            { label: 'Vulnerable Moment', count: 0 },
-            { label: 'New Partner', count: 0 },
-        ];
-
-        let typeKey = null;
-        if (typeof payload === 'string') {
-            typeKey = payload;
-        } else if (payload && typeof payload === 'object') {
-
-            const eventMap = {
-                contact: 'New Contact',
-                conversation: 'Meaningful Conversation',
-                date: 'Date',
-                kiss: 'Kiss',
-                vulnerable: 'Vulnerable Moment'
-            };
-            typeKey = eventMap[payload.label] || null;
-        }
-
-        if (!typeKey) return;
-
-        const updatedIndicators = savedIndicators.map(ind => {
-            const key = ind.label.toLowerCase().replace(/\s/g, '_');
-            if (key ===  typeKey) {
-                return { ...ind, count: (ind.count || 0) + 1 };
-            }
-            return ind;
-        });
-        localStorage.setItem('keyIndicators', JSON.stringify(updatedIndicators));
-    };
-
     const handleAddEvent = () => {
         const newEvent = {
             label: eventType,
@@ -194,38 +185,42 @@ export function Friend_info() {
             contactMethod: eventType === 'contact' ? contactMethod : null
         };
 
-        setEditData(prev => {
-            const updatedTimeline = [...(prev.timeline || []), newEvent];
+        setFriend(prevFriend => {
+            const updatedTimeline = [...(prevFriend.timeline || []), newEvent];
             const updatedProgress = calculateProgress(updatedTimeline);
 
-            const totalDiscussionsDone = updatedTimeline.reduce((sum, e) => sum + (e.discussions?.length || 0), 0);
-            const totalCommitmentsDone = updatedTimeline.reduce((sum, e) => sum + (e.commitments?.length || 0), 0);
-            const totalPossibleDiscussions = discussionOptions.length * updatedTimeline.length;
-            const totalPossibleCommitments = commitmentOptions.length * updatedTimeline.length;
-            const progressPercent = totalPossibleDiscussions + totalPossibleCommitments === 0
-                ? 0
-                : Math.floor((totalDiscussionsDone + totalCommitmentsDone) / (totalPossibleDiscussions + totalPossibleCommitments) * 100);
-
-            setFriend(prevFriend => ({
+            const updatedFriend = {
                 ...prevFriend,
                 timeline: updatedTimeline,
                 progress: updatedProgress
-            }));
-
-            if (
-                eventType === 'contact' &&
-                !prev.hasCountedAsNewContact &&
-                ['inPerson', 'call', 'text', 'social'].includes(contactMethod)
-            ) {
-                updateKeyIndicators('new_contact');
-            }
-        
-            return {
-                ...prev,
-                timeline: updatedTimeline,
-                progress: updatedProgress,
-                progressPercent
             };
+
+            if (eventType === 'contact' && !prevFriend.hasCountedAsNewContact && ['inPerson', 'call', 'text', 'social'].includes(contactMethod)) {
+                updateKeyIndicators('new_contact');
+                updatedFriend.hasCountedAsNewContact = true;
+            } else if (eventType === 'conversation' && selectedDiscussions.length > 0) {
+                updateKeyIndicators('meaningful_conversation');
+            } else if (eventType === 'date') {
+                updateKeyIndicators('date');
+            } else if (eventType === 'kiss') {
+                updateKeyIndicators('kiss');
+            } else if (eventType === 'vulnerable') {
+                updateKeyIndicators('vulnerable');
+            } else if (eventType === 'new_partner') {
+                updateKeyIndicators('new_partner');
+            } else if (['conversation', 'date', 'kiss', 'vulnerable', 'partner'].includes(eventType)) {
+                updateKeyIndicators(eventType);
+            }
+
+            const friends = JSON.parse(localStorage.getItem('friends')) || [];
+            friends[id] = updatedFriend;
+            localStorage.setItem('friends', JSON.stringify(friends));
+
+            window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+
+            setEditData(prev => ({ ...prev, timeline: updatedTimeline, progress: updatedProgress }));
+
+            return updatedFriend;
         });
 
         setShowAddEvent(false);
@@ -234,8 +229,10 @@ export function Friend_info() {
         setSelectedDiscussions([]);
         setSelectedCommitments([]);
         setVulnerableText('');
-        setEventDate(new Date().toISOString().slice(0,16));
-    };  
+        setEventDate(new Date().toISOString().slice(0, 16));
+    };
+
+
 
 
     const discussionOptions = [
@@ -321,25 +318,27 @@ export function Friend_info() {
 
                         <div className="friend-box">
                             <h5>Progress</h5>
+
                             <div className="contact-entry d-flex align-items-center mb-2">
                                 <label className="me-2">Discussions:</label>
                                 <span>{friend.progress?.discussions || 0}</span>
                             </div>
-                            <div className="friend-box">
-                                {editData.timeline?.length > 0 ? (
+
+                            {(() => {
+                                const allDiscussions = editData.timeline?.flatMap(event => event.discussions || []) || [];
+                                const uniqueDiscussions = [...new Set(allDiscussions)];
+                                return uniqueDiscussions.length > 0 ? (
                                     <ul>
-                                        {editData.timeline.map((event, eventIndex) =>
-                                            event.discussions?.map((d, discIndex) => (
-                                                <li key={`${eventIndex}-${discIndex}-${d}`}>{d}</li>
-                                            ))
-                                        )}
+                                        {uniqueDiscussions.map((d, i) => (
+                                            <li key={`discussion-${i}`}>{d}</li>
+                                        ))}
                                     </ul>
                                 ) : (
-                                    <p>No discussions yet</p>
-                                )}
-                            </div>
+                                    <p className="text-muted small">No discussions yet</p>
+                                );
+                            })()}
 
-                            <div className="contact-entry">
+                            <div className="contact-entry mt-3">
                                 <label>Commitments:</label>
                                 {Object.entries(editData.progress.commitments).map(([key, value]) => (
                                     <div key={key} className="d-flex align-items-center mb-1">
@@ -348,19 +347,20 @@ export function Friend_info() {
                                     </div>
                                 ))}
                             </div>
-                            <div className="friend-box">
-                                {editData.timeline?.length > 0 ? (
+
+                            {(() => {
+                                const allCommitments = editData.timeline?.flatMap(event => event.commitments || []) || [];
+                                const uniqueCommitments = [...new Set(allCommitments)];
+                                return uniqueCommitments.length > 0 ? (
                                     <ul>
-                                        {editData.timeline.map((event, eventIndex) =>
-                                            event.commitments?.map((c, commIndex) => (
-                                                <li key={`${eventIndex}-${commIndex}-${c}`}>{c}</li>
-                                            ))
-                                        )}
+                                        {uniqueCommitments.map((c, i) => (
+                                            <li key={`commitment-${i}`}>{c}</li>
+                                        ))}
                                     </ul>
                                 ) : (
-                                    <p>No commitments yet</p>
-                                )}
-                            </div>
+                                    <p className="text-muted small">No commitments yet</p>
+                                );
+                            })()}
                         </div>
 
                         <div className="friend-box">
@@ -384,7 +384,18 @@ export function Friend_info() {
                                     <button type="button" className="btn btn-danger btn-sm" onClick={() => removeItem('availability', i)}>Remove</button>
                                 </div>
                             ))}
-                            <button type="button" className="add-btn" onClick={() => addItem('availability', { day: '', time: '' })}>+ Add Availability</button>
+                            <button 
+                                type="button" 
+                                className="add-btn" 
+                                onClick={() =>
+                                    setEditData(prev => ({
+                                        ...prev,
+                                        availability: [...prev.availability, '']
+                                    }))
+                                }
+                            >
+                                + Add Availability
+                            </button>
                         </div>
 
                         <div className="friend-box">
@@ -401,7 +412,7 @@ export function Friend_info() {
                                     <button type="button" className="btn btn-danger btn-sm" onClick={() => removeItem('interests', i)}>Remove</button>
                                 </div>
                             ))}
-                            <button type="button" className="add-btn" onClick={() => addItem('interests', '')}>+ Add Interest</button>
+                            <button type="button" className="add-btn" onClick={() => setEditData(prev => ({...prev, interests: [...prev.interests, '']}))}>+ Add Interest</button>
                         </div>
 
                         <div className="friend-box">

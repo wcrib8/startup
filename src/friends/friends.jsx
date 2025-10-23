@@ -9,7 +9,19 @@ export function Friends() {
     });
 
     const [showModal, setShowModal] = useState(false);
-    const [newFriend, setNewFriend] = useState({name: '', contactInfo: '', contactType: 'mobile'});
+    const [newFriend, setNewFriend] = useState({
+        name: '',
+        contactInfo: '',
+        contactType: 'mobile',
+        availability: [],
+        interests: [],
+        progress: {
+            discussions: 0,
+            commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0}
+        },
+        timeline: [],
+        hasCountedAsNewContact: false
+    });
 
     const openModal = () => setShowModal(true);
     const closeModal = () => {
@@ -29,7 +41,7 @@ export function Friends() {
         const updateFriends = [
             ...friends,
             { 
-                ...newFriend.name, 
+                ...newFriend, 
                 status: 'interested',
                 contactInfo: [{ type: newFriend.contactType, value: newFriend.contactInfo }],
                 hasCountedAsNewContact: false
@@ -38,6 +50,22 @@ export function Friends() {
 
         setFriends(updateFriends);
         localStorage.setItem('friends', JSON.stringify(updateFriends));
+
+        const indicators = JSON.parse(localStorage.getItem('keyIndicators')) || [
+            { label: 'New Contact', count: 0 },
+            { label: 'Meaningful Conversation', count: 0 },
+            { label: 'Date', count: 0 },
+            { label: 'Kiss', count: 0 },
+            { label: 'Vulnerable Moment', count: 0 },
+            { label: 'New Partner', count: 0 },
+        ];
+    
+        const newContactIndex = indicators.findIndex(ind => ind.label === 'New Contact');
+        if (newContactIndex > -1) {
+            indicators[newContactIndex].count += 1;
+        }
+        localStorage.setItem('keyIndicators', JSON.stringify(indicators));
+        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
         closeModal();
     };
 
