@@ -81,8 +81,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
-- [ ] **Hooks** - I did not complete this part of the deliverable.
+- [x] **All functionality implemented or mocked out** - I have implemented all functionality to the best of my ability, making the KIs respond to the friend information, I am prepared to use third party services to either send me messages, or send out emails to users, and local storage is being used
+- [x] **Hooks** - I have implemented useState and useEffect to change the state of variables, what is loaded by React to the page, and affect values for KIS, etc.
 
 ## 🚀 Service deliverable
 
