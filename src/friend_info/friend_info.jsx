@@ -44,8 +44,8 @@ export function Friend_info() {
             contactInfo: selectedFriend.contactInfo || [],
             availability: selectedFriend.availability || [],
             interests: selectedFriend.interests || [],
-            progress: { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
-            timeline: []
+            progress: selectedFriend.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
+            timeline: selectedFriend.timeline || []
         });
     }, [id, navigate]);
 
@@ -114,6 +114,26 @@ export function Friend_info() {
         }));
     };
 
+    const calculateProgress = (timeline) => {
+        const discussionsSet = new Set();
+        const commitmentsSet = new Set();
+
+        timeline.forEach(event => {
+            (event.discussions || []).forEach(d => discussionsSet.add(d));
+            (event.commitments || []).forEach(c => commitmentsSet.add(c));
+        });
+
+        return {
+            discussions: discussionsSet.size,
+            commitments: {
+                extended: commitmentsSet.size,
+                notExtended: 0,
+                keeping: 0,
+                notKept: 0
+            }
+        };
+    };
+
     const updateProgressBar = (newEvent) => {
         const totalDiscussionsDone = editData.timeline.reduce((sum, e) => sum + (e.discussions?.length || 0), 0) + (newEvent.discussions?.length || 0);
         const totalCommitmentsDone = editData.timeline.reduce((sum, e) => sum + (e.commitments?.length || 0), 0) + (newEvent.commitments?.length || 0);
@@ -173,10 +193,24 @@ export function Friend_info() {
             extraText: eventType === 'vulnerable' ? vulnerableText : '',
             contactMethod: eventType === 'contact' ? contactMethod : null
         };
-                
-        setFriend(prev => {
+
+        setEditData(prev => {
             const updatedTimeline = [...(prev.timeline || []), newEvent];
-            const updatedFriend = { ...prev, timeline: updatedTimeline };
+            const updatedProgress = calculateProgress(updatedTimeline);
+
+            const totalDiscussionsDone = updatedTimeline.reduce((sum, e) => sum + (e.discussions?.length || 0), 0);
+            const totalCommitmentsDone = updatedTimeline.reduce((sum, e) => sum + (e.commitments?.length || 0), 0);
+            const totalPossibleDiscussions = discussionOptions.length * updatedTimeline.length;
+            const totalPossibleCommitments = commitmentOptions.length * updatedTimeline.length;
+            const progressPercent = totalPossibleDiscussions + totalPossibleCommitments === 0
+                ? 0
+                : Math.floor((totalDiscussionsDone + totalCommitmentsDone) / (totalPossibleDiscussions + totalPossibleCommitments) * 100);
+
+            setFriend(prevFriend => ({
+                ...prevFriend,
+                timeline: updatedTimeline,
+                progress: updatedProgress
+            }));
 
             if (
                 eventType === 'contact' &&
@@ -184,18 +218,15 @@ export function Friend_info() {
                 ['inPerson', 'call', 'text', 'social'].includes(contactMethod)
             ) {
                 updateKeyIndicators('new_contact');
-                updatedFriend.hasCountedAsNewContact = true; 
             }
-
-            const friends = JSON.parse(localStorage.getItem('friends')) || [];
-            friends[id] = updatedFriend;
-            localStorage.setItem('friends', JSON.stringify(friends));
-
-            return updatedFriend;
-        });
         
-        updateProgressBar(newEvent);
-        updateKeyIndicators(newEvent);
+            return {
+                ...prev,
+                timeline: updatedTimeline,
+                progress: updatedProgress,
+                progressPercent
+            };
+        });
 
         setShowAddEvent(false);
         setEventType('');
@@ -204,7 +235,8 @@ export function Friend_info() {
         setSelectedCommitments([]);
         setVulnerableText('');
         setEventDate(new Date().toISOString().slice(0,16));
-    };
+    };  
+
 
     const discussionOptions = [
         'family', 'background', 'goals', 'core values', 
@@ -291,21 +323,15 @@ export function Friend_info() {
                             <h5>Progress</h5>
                             <div className="contact-entry d-flex align-items-center mb-2">
                                 <label className="me-2">Discussions:</label>
-                                <input
-                                    type="number"
-                                    value={editData.progress.discussions}
-                                    onChange={(e) => setEditData(prev => ({
-                                        ...prev,
-                                        progress: { ...prev.progress, discussions: Number(e.target.value) }
-                                    }))}
-                                    className="form-control"
-                                />
+                                <span>{friend.progress?.discussions || 0}</span>
                             </div>
                             <div className="friend-box">
-                                {friend.timeline?.length > 0 ? (
+                                {editData.timeline?.length > 0 ? (
                                     <ul>
-                                        {friend.timeline.flatMap(event =>
-                                            event.discussions?.map((d, i) => <li key={`${event.date}-${i}`}>{d}</li>)
+                                        {editData.timeline.map((event, eventIndex) =>
+                                            event.discussions?.map((d, discIndex) => (
+                                                <li key={`${eventIndex}-${discIndex}-${d}`}>{d}</li>
+                                            ))
                                         )}
                                     </ul>
                                 ) : (
@@ -318,29 +344,17 @@ export function Friend_info() {
                                 {Object.entries(editData.progress.commitments).map(([key, value]) => (
                                     <div key={key} className="d-flex align-items-center mb-1">
                                         <span className="me-2" style={{ textTransform: 'capitalize' }}>{key}:</span>
-                                        <input
-                                            type="number"
-                                            value={value}
-                                            onChange={(e) =>
-                                                setEditData(prev => ({
-                                                    ...prev,
-                                                    progress: {
-                                                        ...prev.progress,
-                                                        commitments: { ...prev.progress.commitments, [key]: Number(e.target.value) }
-                                                    }
-                                                }))
-                                            }
-                                            className="form-control"
-                                            style={{ width: '100px' }}
-                                        />
+                                        <span>{value}</span>
                                     </div>
                                 ))}
                             </div>
                             <div className="friend-box">
-                                {friend.timeline?.length > 0 ? (
+                                {editData.timeline?.length > 0 ? (
                                     <ul>
-                                        {friend.timeline.flatMap(event =>
-                                            event.commitments?.map((c, i) => <li key={`${event.date}-c-${i}`}>{c}</li>)
+                                        {editData.timeline.map((event, eventIndex) =>
+                                            event.commitments?.map((c, commIndex) => (
+                                                <li key={`${eventIndex}-${commIndex}-${c}`}>{c}</li>
+                                            ))
                                         )}
                                     </ul>
                                 ) : (
@@ -392,24 +406,62 @@ export function Friend_info() {
 
                         <div className="friend-box">
                             <h5>Timeline</h5>
-                            {editData.timeline.map((event, i) => (
-                                <div key={i} className="contact-entry d-flex align-items-center mb-2">
-                                    <input
-                                        type="text"
-                                        value={event.label}
-                                        onChange={(e) => handleArrayChange('timeline', i, 'label', e.target.value)}
-                                        className="form-control me-2"
-                                        placeholder="Event (e.g., Kiss)"
-                                    />
-                                    <input
-                                        type="datetime-local"
-                                        value={event.date}
-                                        onChange={(e) => handleArrayChange('timeline', i, 'date', e.target.value)}
-                                        className="form-control me-2"
-                                    />
-                                    <button type="button" className="btn btn-danger btn-sm" onClick={() => removeItem('timeline', i)}>Remove</button>
-                                </div>
-                            ))}
+                            {editData.timeline.length > 0 ? (
+                                <ul>
+                                    {editData.timeline.map((event, i) => (
+                                        <li key={i} className="mb-2">
+                                            <strong>{event.label}</strong> — {event.date}
+                                            {event.extraText && <div><em>{event.extraText}</em></div>}
+
+                                            {event.discussions?.length > 0 && (
+                                                <div>
+                                                    <strong>Discussions:</strong>
+                                                    <ul>
+                                                        {event.discussions.map((d, j) => (
+                                                            <li key={j}>{d}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            {event.commitments?.length > 0 && (
+                                                <div>
+                                                    <strong>Commitments:</strong>
+                                                    <ul>
+                                                        {event.commitments.map((c, j) => (
+                                                            <li key={j}>{c}</li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+
+                                            <div className="d-flex gap-2 mt-1">
+                                                <input
+                                                    type="text"
+                                                    value={event.label}
+                                                    onChange={(e) => handleArrayChange('timeline', i, 'label', e.target.value)}
+                                                    className="form-control me-2"
+                                                />
+                                                <input
+                                                    type="datetime-local"
+                                                    value={event.date}
+                                                    onChange={(e) => handleArrayChange('timeline', i, 'date', e.target.value)}
+                                                    className="form-control me-2"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-danger btn-sm"
+                                                    onClick={() => removeItem('timeline', i)}
+                                                >
+                                                    Remove
+                                                </button>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            ) : (
+                                <p>No timeline events yet</p>
+                            )}
                         </div>
 
                         <button className="btn btn-danger btn-sm" onClick={handleSave}>Save</button>

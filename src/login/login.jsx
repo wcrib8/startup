@@ -46,11 +46,11 @@ export function Login({ userName, authState, onAuthChange }) {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <button className="btn btn-primary" type="submit" value="login">Login</button>
+          <button className="btn btn-danger" type="submit" value="login">Login</button>
           <div className="mt-3 text-center">
             <p>Don't have an account? </p>
             <button 
-              className="btn btn-secondary" 
+              className="add-btn" 
               type="button" 
               onClick={() => navigate('/signup')}
             >

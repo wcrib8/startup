@@ -47,7 +47,7 @@ export function Friends() {
                 <tbody>
                     {friends.length === 0 ? (
                         <tr>
-                            <td colSpan="3" className="text-center text-muted">
+                            <td colSpan="3" className="text-center">
                                 No friends added yet.
                             </td>
                         </tr>

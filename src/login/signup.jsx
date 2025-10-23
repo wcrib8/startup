@@ -13,7 +13,7 @@ export function Signup({ onAuthChange }) {
     e.preventDefault();
     if (email && password) {
       localStorage.setItem('userName', email);
-      onAuthChange(AuthState.Authenticated);
+      onAuthChange(email, AuthState.Authenticated);
       navigate('/key_indicators');
     }
   };
@@ -41,13 +41,13 @@ export function Signup({ onAuthChange }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="btn btn-primary" type="submit">
+          <button className="btn btn-danger" type="submit">
             Create Account
           </button>
           <div className="mt-3 text-center">
             <p>Already have an account?</p>
             <button
-              className="btn btn-secondary"
+              className="add-btn"
               type="button"
               onClick={() => navigate('/')}
             >
