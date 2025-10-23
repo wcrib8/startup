@@ -52,7 +52,7 @@ export default function App() {
                 <Route path='/friends' element={<Friends userName={userName} />} />
                 <Route path='/about' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/friend_info' element={<Friend_info userName={userName} />} />
+                <Route path='/friend_info/:id' element={<Friend_info userName={userName} />} />
                 <Route path='/submit_contact' element={<Submit_contact />} />
                 <Route path='*' element={<NotFound />} />
             </Routes>
@@ -79,7 +79,7 @@ function Header({ authState }) {
   const isSubmitContactPage = location.pathname === '/submit_contact';
   const isKeyIndicatorsPage = location.pathname === '/key_indicators';
   const isFriendsPage = location.pathname === '/friends';
-  const isFriendInfoPage = location.pathname === '/friend_info';
+  const isFriendInfoPage = location.pathname.startsWith('/friend_info');
 
   return (
     <header className="site-header">

@@ -148,6 +148,17 @@ main {
   background-color: #a8a310; 
 }
 
+.btn-danger {
+  background-color: #66121a !important; 
+  border-color: #66121a !important;
+  margin-right: 0.5rem;
+}
+
+.btn-danger:hover {
+  background-color: #801a24 !important;
+  border-color: #801a24 !important;
+}
+
 .btn-primary {
   background-color: #dc3545;
   border: none;

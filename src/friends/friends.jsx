@@ -9,11 +9,11 @@ export function Friends() {
     });
 
     const [showModal, setShowModal] = useState(false);
-    const [newFriend, setNewFriend] = useState({name: '', contact: ''});
+    const [newFriend, setNewFriend] = useState({name: '', contactInfo: '', contactType: 'mobile'});
 
     const openModal = () => setShowModal(true);
     const closeModal = () => {
-        setNewFriend({name: '', contact: ''});
+        setNewFriend({name: '', contactInfo: ''});
         setShowModal(false);
     };
 
@@ -23,11 +23,17 @@ export function Friends() {
     };
 
     const handleSave = () => {
-        if (!newFriend.name.trim() || !newFriend.contact.trim()) return alert("Please fill in all fields.");
+        if (!newFriend.name.trim() || !newFriend.contactInfo.trim())
+            return alert("Please fill in all fields.");
 
         const updateFriends = [
             ...friends,
-            { ...newFriend, status: 'interested' },
+            { 
+                ...newFriend.name, 
+                status: 'interested',
+                contactInfo: [{ type: newFriend.contactType, value: newFriend.contactInfo }],
+                hasCountedAsNewContact: false
+            },
         ];
 
         setFriends(updateFriends);
@@ -49,7 +55,7 @@ export function Friends() {
                         friends.map((friend, index) => (
                             <tr key={index}>
                                 <td><span className={`status-circle ${friend.status}`}></span></td>
-                                <td><NavLink to="/friend_info">{friend.name}</NavLink></td>
+                                <td><NavLink to={`/friend_info/${index}`}>{friend.name}</NavLink></td>
                             </tr>
                         ))
                     )}
@@ -57,7 +63,7 @@ export function Friends() {
             </table>
 
             <div className="add-friend-wrapper">
-                <button className="btn btn-primary" onClick={openModal}>Add Friend</button>
+                <button className="btn btn-danger" onClick={openModal}>Add Friend</button>
             </div>
 
             {showModal && (
@@ -81,22 +87,36 @@ export function Friends() {
                                     />
                                 </div>
                                 <div className="mb-3">
-                                    <label className="form-label">Contact</label>
-                                    <input
-                                        type="text"
-                                        name="contact"
-                                        value={newFriend.contact}
-                                        onChange={handleChange}
-                                        className="form-control"
-                                        placeholder="Enter contact info"
-                                    />
+                                    <label className="form-label">Contact Information</label>
+                                    <div className="d-flex">
+                                        <select
+                                            name="contactType"
+                                            value={newFriend.contactType}
+                                            onChange={handleChange}
+                                            className="form-control"
+                                        >
+                                            <option value="mobile">Mobile</option>
+                                            <option value="social">Social Media</option>
+                                            <option value="email">Email</option>
+                                            <option value="address">Address</option>
+                                            <option value="other">Other</option>
+                                        </select>
+                                        <input
+                                            type="text"
+                                            name="contactInfo"
+                                            value={newFriend.contactInfo}
+                                            onChange={handleChange}
+                                            className="form-control me-2"
+                                            placeholder="Enter contact info"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <div className="modal-footer">
-                                <button className="btn btn-secondary" onClick={closeModal}>
+                                <button className="add-btn" onClick={closeModal}>
                                 Cancel
                                 </button>
-                                <button className="btn btn-primary" onClick={handleSave}>
+                                <button className="btn btn-danger" onClick={handleSave}>
                                 Save Friend
                                 </button>
                             </div>
