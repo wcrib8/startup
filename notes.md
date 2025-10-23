@@ -353,6 +353,10 @@ I learned about the many functions and applications of CSS. these tools can be u
 
 I learned about the efficiency of using React, being able to use routes and components so that html pages are kept to a minimum, can prepare for user interaction. Components are the main elements from my html pages. 
 
+### React Phase 2
+
+There is a lot going on with React. I think the most important things are useState and useEffect, these can apply values to elements and objects that let you manipulate what appears on the screen, like counters, or modals, or buttons responding and having an action. This makes users aactually able to interact with the application.
+
 
 
 ## Midterm Notes
