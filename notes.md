@@ -334,6 +334,63 @@ fetch('https://jsonplaceholder.typicode.com/posts', {
   });
 ```
 
+### Express 
+
+Node Package `Express` provides support for:
+
+Routing requests for service endpoints (Routing)
+Manipulating HTTP requests with JSON body content (Handling JSON requests/responses)
+Generating HTTP responses
+Using `middleware` to add functionality
+(also error handling)
+
+You create an Express application by using NPM to install the Express package and then calling the `express` constructor to create the Express application and listen for HTTP requests on a desired port.
+```
+➜ npm install express
+
+const express = require('express');
+const app = express();
+
+app.listen(8080);
+```
+With the `app` object you can now add HTTP routing and middleware functions to the application.
+
+The callback function has three parameters that represent the HTTP request object (req), the HTTP response object (res), and the next routing function that Express expects to be called if this routing function wants another function to generate a response.
+
+route function examples:
+```
+// Wildcard - matches /store/x and /star/y
+app.put('/st*/:storeName', (req, res) => res.send({ update: req.params.storeName }));
+
+// Pure regular expression
+app.delete(/\/store\/(.+)/, (req, res) => res.send({ delete: req.params[0] }));
+```
+
+Middleware are functions that process requests in order before responses are sent. (built-in middleware, custom middleware, 3rd aprty middleware)
+example of writing your own middleware:
+```
+app.use((req, res, next) => {
+  console.log(req.originalUrl);
+  next();
+});
+```
+
+<img width="300" height="445" alt="image" src="https://github.com/user-attachments/assets/d54a4e41-8024-439e-b678-cc0905d4f8df" />
+
+with npm you can use third party middleward
+
+Error middleware has 4 parameters
+```
+app.use((err, req, res, next) => {
+  res.status(500).send({ type: err.name, message: err.message });
+});
+```
+
+### Data Services
+
+Data services allow user data to be stored persistently. Mongo is very popular. 
+
+
 
 
 
