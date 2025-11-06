@@ -34,6 +34,19 @@ export function Friends() {
         setNewFriend((prev) => ({ ...prev, [name]: value }));
     };
 
+    const getStatusClass = (friend) => {
+        if (!friend || !friend.timeline) return "interested";
+
+        const dateCount = friend.timeline.filter(event => event.type === "date" || event.label?.toLowerCase().includes("date")).length;
+        const kissCount = friend.timeline.filter(event => event.type === "kiss" || event.label?.toLowerCase().includes("kiss")).length;
+
+        {console.log(friend.name, friend.timeline)}
+
+        if (kissCount > 0 && dateCount >= 2) return "star";
+        if (dateCount >= 2) return "progressing";
+        return "interested";
+    };
+
     const handleSave = () => {
         if (!newFriend.name.trim() || !newFriend.contactInfo.trim())
             return alert("Please fill in all fields.");
@@ -82,7 +95,7 @@ export function Friends() {
                     ) : (
                         friends.map((friend, index) => (
                             <tr key={index}>
-                                <td><span className={`status-circle ${friend.status}`}></span></td>
+                                <td><span className={`status-circle ${getStatusClass(friend)}`}></span></td>
                                 <td><NavLink to={`/friend_info/${index}`}>{friend.name}</NavLink></td>
                             </tr>
                         ))

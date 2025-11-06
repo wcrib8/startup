@@ -7,7 +7,7 @@ export function Friend_info() {
     const navigate = useNavigate();
 
     const [showAddEvent, setShowAddEvent] = useState(false);
-    const [eventType, setEventType] = useState('');
+    const [eventType, setEventType] = useState('contact');
     const [contactMethod, setContactMethod] = useState('');
     const [selectedDiscussions, setSelectedDiscussions] = useState([]);
     const [selectedCommitments, setSelectedCommitments] = useState([]);
@@ -632,6 +632,7 @@ export function Friend_info() {
                     <textarea 
                         placeholder="Describe the vulnerable moment" 
                         value={vulnerableText} 
+                        className="friend-box"
                         onChange={e => setVulnerableText(e.target.value)}
                     />
                     )}
