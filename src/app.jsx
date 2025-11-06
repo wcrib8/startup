@@ -17,10 +17,28 @@ export default function App() {
   const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
   const [authState, setAuthState] = React.useState(currentAuthState);
 
+  function handleLogout() {
+    localStorage.removeItem('userName');
+    localStorage.removeItem('keyIndicators');
+    localStorage.removeItem('friends');
+    localStorage.removeItem('lastResetDate');
+    setUserName('');
+    setAuthState(AuthState.Unauthenticated);
+  } 
+
+  const handleAuthChange = (newUserName, newAuthState) => {
+    setUserName(newUserName);
+    setAuthState(newAuthState);
+    if (newAuthState === AuthState.Authenticated) {
+      localStorage.setItem('userName', newUserName);
+    }
+  };
+
+
   return (
     <BrowserRouter>
         <div className="body">
-            <Header authState={authState}/>
+            <Header authState={authState} onLogout={handleLogout} />
             <Routes>
                 <Route
                   path='/' 
@@ -48,11 +66,32 @@ export default function App() {
                     />
                   } 
                 />
-                <Route path='/key_indicators' element={<Key_indicators userName={userName} />} />
-                <Route path='/friends' element={<Friends userName={userName} />} />
+                <Route 
+                  path='/key_indicators' 
+                  element={
+                    <ProtectedRoute authState={authState}>
+                      <Key_indicators userName={userName} />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path='/friends' 
+                  element={
+                    <ProtectedRoute authState={authState}>
+                      <Friends userName={userName} />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path='/about' element={<About />} />
                 <Route path='/contact' element={<Contact />} />
-                <Route path='/friend_info/:id' element={<Friend_info userName={userName} />} />
+                <Route 
+                  path='/friend_info/:id' 
+                  element={
+                    <ProtectedRoute authState={authState}>
+                      <Friend_info userName={userName} />
+                    </ProtectedRoute>
+                  } 
+                />
                 <Route path='/submit_contact' element={<Submit_contact />} />
                 <Route path='*' element={<NotFound />} />
             </Routes>
@@ -164,9 +203,7 @@ function Header({ authState }) {
                   <NavLink 
                     className="nav-link text-light" 
                     to="/"
-                    onClick={() => {
-                      localStorage.removeItem('userName');
-                    }}
+                    onClick={onLogout}
                   >
                     Back to Login
                   </NavLink>
@@ -185,9 +222,7 @@ function Header({ authState }) {
                   <NavLink 
                     className="nav-link text-light" 
                     to="/"
-                    onClick={() => {
-                      localStorage.removeItem('userName');
-                    }}
+                    onClick={onLogout}
                   >
                     Back to Login
                   </NavLink>
@@ -206,9 +241,7 @@ function Header({ authState }) {
                   <NavLink 
                     className="nav-link text-light" 
                     to="/"
-                    onClick={() => {
-                      localStorage.removeItem('userName');
-                    }}
+                    onClick={onLogout}
                   >
                     Back to Login
                   </NavLink>

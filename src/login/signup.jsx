@@ -49,7 +49,10 @@ export function Signup({ onAuthChange }) {
             <button
               className="add-btn"
               type="button"
-              onClick={() => navigate('/')}
+              onClick={() => {
+                onAuthChange('', AuthState.Unauthenticated);
+                navigate('/');
+              }}
             >
               Back to Login
             </button>
