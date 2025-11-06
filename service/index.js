@@ -7,7 +7,16 @@ const app = express();
 const authCookieName = 'token';
 
 let users = [];
-let scores = [];
+let key_indicators = [
+    { label: 'New Contact', count: 0 },
+    { label: 'Meaningful Conversation', count: 0 },
+    { label: 'Date', count: 0 },
+    { label: 'Kiss', count: 0 },
+    { label: 'Vulnerable Moment', count: 0 },
+    { label: 'New Partner', count: 0 },
+];
+let friends = [];
+let lastResetDate = new Date().toISOString();
 
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
@@ -142,6 +151,17 @@ function setAuthCookie(res, authToken) {
         sameSite: 'strict',
     });
 }
+
+function updateKeyIndicators(updated) {
+  keyIndicators = updated;
+  return keyIndicators;
+}
+
+function updateFriends(updated) {
+  friends = updated;
+  return friends;
+}
+
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);
