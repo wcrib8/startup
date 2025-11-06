@@ -11,6 +11,7 @@ import { Key_indicators } from './key_indicators/key_indicators';
 import { Friend_info } from './friend_info/friend_info';
 import { Submit_contact } from './submit_contact/submit_contact';
 import { AuthState } from './login/auth_state';
+import { ProtectedRoute } from './protected_route';
 
 export default function App() {
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
