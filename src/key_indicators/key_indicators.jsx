@@ -3,57 +3,127 @@ import './key_indicators.css';
 
 export function Key_indicators() {
     const defaultIndicators = [
-        { label: 'New Contact', count: 0 },
-        { label: 'Meaningful Conversation', count: 0 },
-        { label: 'Date', count: 0 },
-        { label: 'Kiss', count: 0 },
-        { label: 'Vulnerable Moment', count: 0 },
-        { label: 'New Partner', count: 0 },
+    { label: 'New Contact', count: 0 },
+    { label: 'Meaningful Conversation', count: 0 },
+    { label: 'Date', count: 0 },
+    { label: 'Kiss', count: 0 },
+    { label: 'Vulnerable Moment', count: 0 },
+    { label: 'New Partner', count: 0 },
     ];
 
-    const [indicators, setIndicators] = useState([]);
-
-    // reset indicators to default for Sunday
-    const resetIndicators = () => {
-        localStorage.setItem('keyIndicators', JSON.stringify(defaultIndicators));
-        localStorage.setItem('lastResetDate', new Date().toISOString());
-        setIndicators(defaultIndicators);
-        console.log('%c[KeyIndicators] Weekly reset applied!', 'color: green');
+    const loadIndicatorsFromBackend = async () => {
+    try {
+        const res = await fetch('/api/key_indicators', {
+        credentials: 'include',
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setIndicators(data);
+        localStorage.setItem('keyIndicators', JSON.stringify(data));
+        return data;
+    } catch (err) {
+        console.warn('[KeyIndicators] Failed to load from backend, falling back to localStorage:', err);
+        const saved = JSON.parse(localStorage.getItem('keyIndicators')) || defaultIndicators;
+        setIndicators(saved);
+        return saved;
+    }
     };
 
-    // load current indicators
-    const loadIndicators = () => {
-        const savedIndicators = JSON.parse(localStorage.getItem('keyIndicators')) || defaultIndicators;
-        setIndicators(savedIndicators);
+    const saveIndicatorsToBackend = async (updated) => {
+    try {
+        const res = await fetch('/api/key_indicators', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updated),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        setIndicators(data);
+        localStorage.setItem('keyIndicators', JSON.stringify(data));
+        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+        return data;
+    } catch (err) {
+        console.error('[KeyIndicators] Failed to save to backend:', err);
+        setIndicators(updated);
+        localStorage.setItem('keyIndicators', JSON.stringify(updated));
+        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+        return updated;
+    }
+    };
+
+    const getLastResetDateFromBackend = async () => {
+    try {
+        const res = await fetch('/api/key_indicators/reset_date', { credentials: 'include' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json(); 
+        return data.lastResetDate;
+    } catch (err) {
+        console.warn('[KeyIndicators] Could not get lastResetDate from backend, falling back to localStorage', err);
+        return localStorage.getItem('lastResetDate') || null;
+    }
+    };
+
+    const setLastResetDateOnBackend = async (isoString) => {
+    try {
+        const res = await fetch('/api/key_indicators/reset_date', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ lastResetDate: isoString }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        localStorage.setItem('lastResetDate', data.lastResetDate);
+        return data.lastResetDate;
+    } catch (err) {
+        console.warn('[KeyIndicators] Could not set lastResetDate on backend, saving locally', err);
+        localStorage.setItem('lastResetDate', isoString);
+        return isoString;
+    }
+    };
+
+    const resetIndicators = async () => {
+    const iso = new Date().toISOString();
+    await saveIndicatorsToBackend(defaultIndicators);
+    await setLastResetDateOnBackend(iso);
+    console.log('%c[KeyIndicators] Weekly reset applied!', 'color: green');
     };
 
     // check if today is past Sunday
-    const checkForWeeklyReset = () => {
-        const now = new Date();
-        const lastReset = localStorage.getItem('lastResetDate');
-        const lastSunday = new Date(now);
-        lastSunday.setDate(now.getDate() - now.getDay()); 
-        lastSunday.setHours(0, 0, 0, 0);
+    const checkForWeeklyReset = async () => {
+    const now = new Date();
+    const lastSunday = new Date(now);
+    lastSunday.setDate(now.getDate() - now.getDay());
+    lastSunday.setHours(0, 0, 0, 0);
 
-        if (!lastReset || new Date(lastReset) < lastSunday) {
-            resetIndicators();
-        } else {
-            loadIndicators();
-        }
+    const lastResetRaw = await getLastResetDateFromBackend();
+    const lastReset = lastResetRaw ? new Date(lastResetRaw) : null;
+
+    if (!lastReset || lastReset < lastSunday) {
+        await resetIndicators();
+    } else {
+        await loadIndicatorsFromBackend();
+    }
     };
 
     useEffect(() => {
-        checkForWeeklyReset();
+    checkForWeeklyReset();
 
-        // Update if storage changes
-        window.addEventListener('storage', loadIndicators);
-        window.addEventListener('keyIndicatorsUpdated', loadIndicators);
+    // keep UI updated when other parts update indicators
+    const handleLoad = () => {
+        loadIndicatorsFromBackend();
+    };
 
-        return () => {
-            window.removeEventListener('storage', loadIndicators);
-            window.removeEventListener('keyIndicatorsUpdated', loadIndicators);
-        };
+    window.addEventListener('storage', handleLoad);
+    window.addEventListener('keyIndicatorsUpdated', handleLoad);
+
+    return () => {
+        window.removeEventListener('storage', handleLoad);
+        window.removeEventListener('keyIndicatorsUpdated', handleLoad);
+    };
     }, []);
+
 
     return (
         <main className="container">

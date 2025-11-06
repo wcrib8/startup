@@ -1,3 +1,5 @@
+const path = require('path');
+
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
@@ -22,7 +24,7 @@ const port = process.argv.length > 2 ? process.argv[2] : 3000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 let apiRouter = express.Router();
 app.use(`/api`, apiRouter);
@@ -80,7 +82,7 @@ apiRouter.get('/key_indicators', verifyAuth, (_req, res) => {
 
 // Update KeyIndicators
 apiRouter.post('/key_indicators', verifyAuth, (req, res) => {
-  keyIndicators = updateKeyIndicators(req.body);
+  keyIndicators = req.body;
   res.send(keyIndicators);
 });
 
@@ -125,7 +127,7 @@ app.use(function (err, req, res, next) {
 
 // Return the application's default page if the path is unknown
 app.use((_req, res) => {
-  res.sendFile('index.html', { root: 'public' });
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 async function createUser(email, password) {

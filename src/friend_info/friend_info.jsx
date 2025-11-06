@@ -67,24 +67,33 @@ export function Friend_info() {
 
 
     useEffect(() => {
-        const savedFriends = JSON.parse(localStorage.getItem('friends')) || [];
-        const friendIndex = parseInt(id, 10);
-        if (isNaN(friendIndex) || !savedFriends[friendIndex]) {
-            navigate('/friends');
-            return;
-        }
+        const loadFriend = async () => {
+            try {
+                const response = await fetch('/api/friends', { credentials: 'include' });
+                const data = await response.json();
+                const friendIndex = parseInt(id, 10);
+                
+                if (isNaN(friendIndex) || !data[friendIndex]) {
+                    navigate('/friends');
+                    return;
+                }
 
-        const selectedFriend = savedFriends[friendIndex];
+                const selectedFriend = data[friendIndex];
+                setFriend(selectedFriend);
+                setEditData({
+                    name: selectedFriend.name || '',
+                    contactInfo: selectedFriend.contactInfo || [],
+                    availability: selectedFriend.availability || [],
+                    interests: selectedFriend.interests || [],
+                    progress: selectedFriend.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
+                    timeline: selectedFriend.timeline || []
+                });
+            } catch (error) {
+                console.error('Failed to load friends:', error);
+            }
+        };
 
-        setFriend(selectedFriend);
-        setEditData({
-            name: selectedFriend.name || '',
-            contactInfo: selectedFriend.contactInfo || [],
-            availability: selectedFriend.availability || [],
-            interests: selectedFriend.interests || [],
-            progress: selectedFriend.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
-            timeline: selectedFriend.timeline || []
-        });
+        loadFriend();
     }, [id, navigate]);
 
     // WebSocket action
@@ -109,13 +118,26 @@ export function Friend_info() {
         setEditData((prev) => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
-        const friends = JSON.parse(localStorage.getItem('friends')) || [];
-        friends[id] = { ...friend, ...editData };
-        localStorage.setItem('friends', JSON.stringify(friends));
-        setFriend(friends[id]);
-        setIsEditing(false);
+    const handleSave = async () => {
+        try {
+            const updatedFriend = { ...friend, ...editData };
+
+            const response = await fetch('/api/friends', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(updatedFriend),
+            });
+
+            const updatedFriends = await response.json();
+            setFriend(updatedFriend);
+            setIsEditing(false);
+            console.log('Friend saved to backend:', updatedFriends);
+        } catch (err) {
+            console.error('Error saving friend:', err);
+        }
     };
+
 
     if (!friend) return <main className="container">Loading...</main>;
 

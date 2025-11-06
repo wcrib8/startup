@@ -3,11 +3,8 @@ import { NavLink } from 'react-router-dom';
 import './friends.css';
 
 export function Friends() {
-    const [friends, setFriends] = useState(() => {
-        const savedFriends = localStorage.getItem('friends');
-        return savedFriends ? JSON.parse(savedFriends) : [];
-    });
-
+    const [friends, setFriends] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
     const [newFriend, setNewFriend] = useState({
         name: '',
@@ -23,6 +20,28 @@ export function Friends() {
         hasCountedAsNewContact: false
     });
 
+    // load friends from backend
+    useEffect(() => {
+        async function loadFriends() {
+            try {
+                const res = await fetch('/api/friends', {
+                    credentials: 'include', 
+                });
+                if (!res.ok) throw new Error('Failed to fetch friends');
+                const data = await res.json();
+                setFriends(data);
+            } catch (err) {
+                console.error('Error loading friends:', err);
+                const saved = localStorage.getItem('friends');
+                if (saved) setFriends(JSON.parse(saved));
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadFriends();
+    }, []);
+
     const openModal = () => setShowModal(true);
     const closeModal = () => {
         setNewFriend({name: '', contactInfo: ''});
@@ -33,6 +52,38 @@ export function Friends() {
         const { name, value } = e.target;
         setNewFriend((prev) => ({ ...prev, [name]: value }));
     };
+
+    // save friend with backend
+    async function handleSave() {
+        if (!newFriend.name.trim() || !newFriend.contactInfo.trim()) {
+            alert('Please fill in all fields.');
+            return;
+        }
+
+        try {
+            const friendToAdd = {
+                ...newFriend,
+                contactInfo: [{ type: newFriend.contactType, value: newFriend.contactInfo }],
+            };
+
+            const res = await fetch('/api/friends', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(friendToAdd),
+            });
+
+            if (!res.ok) throw new Error('Failed to save friend');
+            const updatedList = await res.json(); // backend can return full updated list
+
+            setFriends(updatedList);
+            localStorage.setItem('friends', JSON.stringify(updatedList)); // optional fallback
+            closeModal();
+        } catch (err) {
+            console.error('Error saving friend:', err);
+            alert('Could not save friend. Please try again.');
+        }
+    }
 
     const getStatusClass = (friend) => {
         if (!friend || !friend.timeline) return "interested";
@@ -47,40 +98,7 @@ export function Friends() {
         return "interested";
     };
 
-    const handleSave = () => {
-        if (!newFriend.name.trim() || !newFriend.contactInfo.trim())
-            return alert("Please fill in all fields.");
-
-        const updateFriends = [
-            ...friends,
-            { 
-                ...newFriend, 
-                status: 'interested',
-                contactInfo: [{ type: newFriend.contactType, value: newFriend.contactInfo }],
-                hasCountedAsNewContact: false
-            },
-        ];
-
-        setFriends(updateFriends);
-        localStorage.setItem('friends', JSON.stringify(updateFriends));
-
-        const indicators = JSON.parse(localStorage.getItem('keyIndicators')) || [
-            { label: 'New Contact', count: 0 },
-            { label: 'Meaningful Conversation', count: 0 },
-            { label: 'Date', count: 0 },
-            { label: 'Kiss', count: 0 },
-            { label: 'Vulnerable Moment', count: 0 },
-            { label: 'New Partner', count: 0 },
-        ];
-    
-        const newContactIndex = indicators.findIndex(ind => ind.label === 'New Contact');
-        if (newContactIndex > -1) {
-            indicators[newContactIndex].count += 1;
-        }
-        localStorage.setItem('keyIndicators', JSON.stringify(indicators));
-        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
-        closeModal();
-    };
+    if (loading) return <p>Loading friends</p>;
 
     return (
         <main className="container">
