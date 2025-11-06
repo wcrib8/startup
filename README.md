@@ -88,12 +88,12 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Supports registration, login, logout, and restricted endpoint** - I did not complete this part of the deliverable.
+- [x] **Node.js/Express HTTP service** - connected express to use web service
+- [x] **Static middleware for frontend** - middleware allows for frontend to be called/delivered from backend
+- [x] **Calls to third party endpoints** - third party endpoints are connected and functional, to EmailJS
+- [x] **Backend service endpoints** - Backend connected, using fetch elements and calling APIs
+- [x] **Frontend calls service endpoints** - using fetch to retrieve backend information
+- [x] **Supports registration, login, logout, and restricted endpoint** - users must be authenticated for full access.
 
 
 ## 🚀 DB deliverable
