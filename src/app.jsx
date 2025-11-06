@@ -11,12 +11,20 @@ import { Key_indicators } from './key_indicators/key_indicators';
 import { Friend_info } from './friend_info/friend_info';
 import { Submit_contact } from './submit_contact/submit_contact';
 import { AuthState } from './login/auth_state';
+
 import { ProtectedRoute } from './protected_route';
+function ProtectedRoute({ authState, children }) {
+  if (authState !== AuthState.Authenticated) {
+    return <Navigate to="/" replace />;
+  }
+  return children;
+}
 
 export default function App() {
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
-  const currentAuthState = userName ? AuthState.Authenticated : AuthState.Unauthenticated;
-  const [authState, setAuthState] = React.useState(currentAuthState);
+  const [authState, setAuthState] = React.useState(
+    userName ? AuthState.Authenticated : AuthState.Unauthenticated
+  );
 
   function handleLogout() {
     localStorage.removeItem('userName');
@@ -38,78 +46,79 @@ export default function App() {
 
   return (
     <BrowserRouter>
-        <div className="body">
-            <Header authState={authState} onLogout={handleLogout} />
-            <Routes>
-                <Route
-                  path='/' 
-                  element={
-                    <Login
-                      userName={userName}
-                      authState={authState}
-                      onAuthChange={(userName, authState) => {
-                        setUserName(userName);       
-                        setAuthState(authState);
-                      }}
-                    />
-                  }
-                />
-                <Route 
-                  path="/signup" 
-                  element={
-                    <Signup 
-                      userName={userName}
-                      authState={authState}
-                      onAuthChange={(userName, authState) => {
-                        setUserName(userName);       
-                        setAuthState(authState);
-                      }} 
-                    />
-                  } 
-                />
-                <Route 
-                  path='/key_indicators' 
-                  element={
-                    <ProtectedRoute authState={authState}>
-                      <Key_indicators userName={userName} />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path='/friends' 
-                  element={
-                    <ProtectedRoute authState={authState}>
-                      <Friends userName={userName} />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path='/about' element={<About />} />
-                <Route path='/contact' element={<Contact />} />
-                <Route 
-                  path='/friend_info/:id' 
-                  element={
-                    <ProtectedRoute authState={authState}>
-                      <Friend_info userName={userName} />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route path='/submit_contact' element={<Submit_contact />} />
-                <Route path='*' element={<NotFound />} />
-            </Routes>
+      <div className="body">
+        <Header authState={authState} onLogout={handleLogout} />
 
-            <footer className="site-footer">
-            <div className="container">
-                <span className="text-reset">Wolf Cribbs</span>
-                <span>&copy; 2025 PMGDating. All rights reserved.</span>
-                <a href="https://github.com/wcrib8/startup.git" className="footer-link"> GitHub</a>
-            </div>
-            </footer>
-        </div>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              authState === AuthState.Authenticated ? (
+                <Navigate to="/key_indicators" replace />
+              ) : (
+                <Login userName={userName} authState={authState} onAuthChange={handleAuthChange} />
+              )
+            }
+          />
+
+          <Route
+            path="/signup"
+            element={
+              authState === AuthState.Authenticated ? (
+                <Navigate to="/key_indicators" replace />
+              ) : (
+                <Signup onAuthChange={handleAuthChange} />
+              )
+            }
+          />
+
+          <Route
+            path="/key_indicators"
+            element={
+              <ProtectedRoute authState={authState}>
+                <Key_indicators userName={userName} authState={authState} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/friends"
+            element={
+              <ProtectedRoute authState={authState}>
+                <Friends userName={userName} authState={authState} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/friend_info/:id"
+            element={
+              <ProtectedRoute authState={authState}>
+                <Friend_info userName={userName} authState={authState} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/submit_contact" element={<Submit_contact />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+
+        <footer className="site-footer">
+          <div className="container">
+            <span className="text-reset">Wolf Cribbs</span>
+            <span>&copy; 2025 PMGDating. All rights reserved.</span>
+            <a href="https://github.com/wcrib8/startup.git" className="footer-link">
+              {' '}
+              GitHub
+            </a>
+          </div>
+        </footer>
+      </div>
     </BrowserRouter>
   );
 }
 
-function Header({ authState }) {
+function Header({ authState, onLogout }) {
   const location = useLocation();
 
   const isLoginPage = location.pathname === '/';
@@ -128,7 +137,7 @@ function Header({ authState }) {
         <p className="pmg-subtitle">Through Dating</p>
         <nav>
           <menu className="nav">
-            {isLoginPage ? (
+            {(isLoginPage || isSignUpPage) && (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link text-light" to="/about">
@@ -141,128 +150,72 @@ function Header({ authState }) {
                   </NavLink>
                 </li>
               </>
-            ) : isSignUpPage ? (
-              <>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/about">
-                    About
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/contact">
-                    Contact
-                  </NavLink>
-                </li>
-              </>
-            ) : isAboutPage ? (
+            )}
+
+            {(isAboutPage || isContactPage || isSubmitContactPage) && (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link text-light" to="/">
                     Login
                   </NavLink>
                 </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/contact">
-                    Contact
-                  </NavLink>
-                </li>
+                {isAboutPage && (
+                  <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/contact">
+                      Contact
+                    </NavLink>
+                  </li>
+                )}
+                {isContactPage && (
+                  <li className="nav-item">
+                    <NavLink className="nav-link text-light" to="/about">
+                      About
+                    </NavLink>
+                  </li>
+                )}
               </>
-            ) : isContactPage ? (
+            )}
+
+            {(isKeyIndicatorsPage || isFriendsPage || isFriendInfoPage) && (
               <>
                 <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/">
-                    Login
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/about">
-                    About
-                  </NavLink>
-                </li>
-              </>
-            ) : isSubmitContactPage ? (
-              <>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/">
-                    Login
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/about">
-                    About
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link text-light" to="/contact">
-                    Contact
-                  </NavLink>
-                </li>
-                </>
-            ) : isKeyIndicatorsPage ? (
-              <>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link text-light" 
+                  <NavLink
+                    className="nav-link text-light"
                     to="/"
                     onClick={onLogout}
                   >
                     Back to Login
                   </NavLink>
                 </li>
-                {authState === AuthState.Authenticated && (
+                {authState === AuthState.Authenticated && isKeyIndicatorsPage && (
                   <li className="nav-item">
                     <NavLink className="nav-link text-light" to="/friends">
                       Friends
                     </NavLink>
                   </li>
                 )}
-              </>
-            ) : isFriendsPage ? (
-                <>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link text-light" 
-                    to="/"
-                    onClick={onLogout}
-                  >
-                    Back to Login
-                  </NavLink>
-                </li>
-                {authState === AuthState.Authenticated && (
+                {authState === AuthState.Authenticated && isFriendsPage && (
                   <li className="nav-item">
                     <NavLink className="nav-link text-light" to="/key_indicators">
                       Key Indicators
                     </NavLink>
                   </li>
                 )}
-                </>
-            ) : isFriendInfoPage ? (
-                <>
-                <li className="nav-item">
-                  <NavLink 
-                    className="nav-link text-light" 
-                    to="/"
-                    onClick={onLogout}
-                  >
-                    Back to Login
-                  </NavLink>
-                </li>
-                {authState === AuthState.Authenticated && (
+                {authState === AuthState.Authenticated && isFriendInfoPage && (
                   <li className="nav-item">
                     <NavLink className="nav-link text-light" to="/friends">
                       Friends
                     </NavLink>
                   </li>
                 )}
-                </>
-            ) : null}
+              </>
+            )}
           </menu>
         </nav>
       </div>
     </header>
   );
 }
-
 
 function NotFound() {
   return <main className="container-fluid bg-secondary text-center">404: Return to sender. Address unknown.</main>;

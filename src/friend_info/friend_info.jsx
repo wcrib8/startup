@@ -67,6 +67,11 @@ export function Friend_info() {
 
 
     useEffect(() => {
+        if (authState !== AuthState.Authenticated) {
+        navigate('/');
+        return;
+    }
+
         const loadFriend = async () => {
             try {
                 const response = await fetch('/api/friends', { credentials: 'include' });

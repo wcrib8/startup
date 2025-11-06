@@ -23,6 +23,13 @@ export function Friends() {
     // load friends from backend
     useEffect(() => {
         async function loadFriends() {
+            if (authState !== AuthState.Authenticated) {
+                setFriends([]);
+                setKeyIndicators([]);
+                setLoading(false);
+                return;
+            }
+
             try {
                 const res = await fetch('/api/friends', {
                     credentials: 'include', 
@@ -40,7 +47,7 @@ export function Friends() {
         }
 
         loadFriends();
-    }, []);
+    }, [authState]);
 
     const openModal = () => setShowModal(true);
     const closeModal = () => {

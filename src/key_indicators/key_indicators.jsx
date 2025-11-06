@@ -108,21 +108,27 @@ export function Key_indicators() {
     };
 
     useEffect(() => {
-    checkForWeeklyReset();
+        if (authState !== AuthState.Authenticated) {
+            setKeyIndicators([]);
+            setFriends([]);
+            setLoading(false);
+            return;
+        }
+        checkForWeeklyReset();
 
-    // keep UI updated when other parts update indicators
-    const handleLoad = () => {
-        loadIndicatorsFromBackend();
-    };
+        // keep UI updated when other parts update indicators
+        const handleLoad = () => {
+            loadIndicatorsFromBackend();
+        };
 
-    window.addEventListener('storage', handleLoad);
-    window.addEventListener('keyIndicatorsUpdated', handleLoad);
+        window.addEventListener('storage', handleLoad);
+        window.addEventListener('keyIndicatorsUpdated', handleLoad);
 
-    return () => {
-        window.removeEventListener('storage', handleLoad);
-        window.removeEventListener('keyIndicatorsUpdated', handleLoad);
-    };
-    }, []);
+        return () => {
+            window.removeEventListener('storage', handleLoad);
+            window.removeEventListener('keyIndicatorsUpdated', handleLoad);
+        };
+    }, [authState]);
 
 
     return (
