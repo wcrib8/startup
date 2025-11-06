@@ -9,12 +9,28 @@ export function Login({ userName, authState, onAuthChange }) {
   const navigate = useNavigate();
   const [isSignup, setIsSignup] = React.useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      localStorage.setItem('userName', email);
-      onAuthChange(email, AuthState.Authenticated);
-      navigate('/key_indicators');
+    if (!email || !password) return;
+
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', 
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        onAuthChange(data.email, AuthState.Authenticated);
+        navigate('/key_indicators');
+      } else {
+        alert('Invalid credentials');
+      }
+    } catch (err) {
+      console.error('Login error', err);
+      alert('Login failed. Check console for details.');
     }
   };
 
