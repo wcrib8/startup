@@ -15,7 +15,8 @@ export function Friend_info() {
     const [eventDate, setEventDate] = useState(new Date().toISOString().slice(0,16));
     const [otherDiscussion, setOtherDiscussion] = useState('');
     const [otherCommitment, setOtherCommitment] = useState('');
-
+    
+    const [socket, setSocket] = React.useState(null);
 
 
     const [friend, setFriend] = React.useState({
@@ -85,6 +86,21 @@ export function Friend_info() {
             timeline: selectedFriend.timeline || []
         });
     }, [id, navigate]);
+
+    // WebSocket action
+    React.useEffect(() => {
+        const ws = new WebSocket('ws://localhost:4000'); // will be my WS server!!!!!
+
+        ws.onopen = () => console.log('WebSocket connected');
+        ws.onmessage = (event) => console.log('Received:', event.data);
+        ws.onerror = (error) => console.error('WebSocket error:', error);
+        ws.onclose = () => console.log('WebSocket closed');
+
+        setSocket(ws);
+
+        return () => ws.close(); 
+    }, []); 
+
 
     const handleEditToggle = () => setIsEditing((prev) => !prev);
 
@@ -165,6 +181,22 @@ export function Friend_info() {
             }
         };
     };
+
+    const handleRefer = () => {
+        if (!socket || socket.readyState !== WebSocket.OPEN) {
+            alert('WebSocket not connected. Cannot send referral yet.');
+            return;
+        }
+
+        const referralData = {
+            type: 'friend_referral',
+            friend: { ...friend } 
+        };
+
+        socket.send(JSON.stringify(referralData));
+        alert(`Friend "${friend.name}" has been referred!`);
+    };
+
 
     const updateProgressBar = (friendData) => {
         // Collect discussions and commitments from timeline
@@ -587,9 +619,14 @@ export function Friend_info() {
                 )}
 
                 {!isEditing && (
-                    <button className="btn btn-danger" onClick={() => setShowAddEvent(true)}>
-                        + Add Event
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+                        <button className="btn btn-danger" onClick={() => setShowAddEvent(true)}>
+                            + Add Event
+                        </button>
+                        <button className="btn btn-danger" onClick={handleRefer}>
+                            Refer
+                        </button>
+                    </div>
                 )}
             </section>
 
