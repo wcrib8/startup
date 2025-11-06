@@ -13,10 +13,14 @@ export function Friend_info() {
     const [selectedCommitments, setSelectedCommitments] = useState([]);
     const [vulnerableText, setVulnerableText] = useState('');
     const [eventDate, setEventDate] = useState(new Date().toISOString().slice(0,16));
+    const [otherDiscussion, setOtherDiscussion] = useState('');
+    const [otherCommitment, setOtherCommitment] = useState('');
+
 
 
     const [friend, setFriend] = React.useState({
-        hasCountedAsNewContact: false
+        hasCountedAsNewContact: false,
+        hasCountedAsNewParnter: false
     });
     const [isEditing, setIsEditing] = React.useState(false);
     const [editData, setEditData] = React.useState({
@@ -162,38 +166,67 @@ export function Friend_info() {
         };
     };
 
-    const updateProgressBar = (newEvent) => {
-        const totalDiscussionsDone = editData.timeline.reduce((sum, e) => sum + (e.discussions?.length || 0), 0) + (newEvent.discussions?.length || 0);
-        const totalCommitmentsDone = editData.timeline.reduce((sum, e) => sum + (e.commitments?.length || 0), 0) + (newEvent.commitments?.length || 0);
-        const totalPossibleDiscussions = discussionOptions.length * (editData.timeline.length + 1);
-        const totalPossibleCommitments = commitmentOptions.length * (editData.timeline.length + 1);
+    const updateProgressBar = (friendData) => {
+        // Collect discussions and commitments from timeline
+        const completedDiscussions = new Set();
+        const completedCommitments = new Set();
 
-        const progressPercent = totalPossibleDiscussions + totalPossibleCommitments === 0
+        friendData.timeline.forEach(event => {
+            event.discussions?.forEach(d => {
+                if (d.toLowerCase() !== "other") completedDiscussions.add(d.toLowerCase());
+            });
+            event.commitments?.forEach(c => {
+                if (c.toLowerCase() !== "other") completedCommitments.add(c.toLowerCase());
+            });
+        });
+
+        // Total possible from available options
+        const totalDiscussions = discussionOptions.filter(d => d.toLowerCase() !== "other").length;
+        const totalCommitments = commitmentOptions.filter(c => c.toLowerCase() !== "other").length;
+
+        const totalCompleted = completedDiscussions.size + completedCommitments.size;
+        const totalPossible = totalDiscussions + totalCommitments;
+
+        const progressPercent = totalPossible === 0
             ? 0
-            : Math.floor((totalDiscussionsDone + totalCommitmentsDone) / (totalPossibleDiscussions + totalPossibleCommitments) * 100);
+            : Math.floor((totalCompleted / totalPossible) * 100);
 
-        setEditData(prev => ({ ...prev, progressPercent }));
+        return progressPercent;
     };
 
     const handleAddEvent = () => {
         const newEvent = {
             label: eventType,
             date: eventDate,
-            discussions: selectedDiscussions,
-            commitments: selectedCommitments,
+            discussions: [
+                ...selectedDiscussions.filter(d => d !== 'other'),
+                ...(otherDiscussion ? [otherDiscussion] : [])
+            ],
+            commitments: [
+                ...selectedCommitments.filter(c => c !== 'other'),
+                ...(otherCommitment ? [otherCommitment] : [])
+            ],
             extraText: eventType === 'vulnerable' ? vulnerableText : '',
             contactMethod: eventType === 'contact' ? contactMethod : null
         };
 
+        // Check for new partner commitment
+        const isNewPartnerCommitment = selectedCommitments.some(c =>
+            c.toLowerCase().includes('girlfriend') || c.toLowerCase().includes('boyfriend')
+        );
+
         setFriend(prevFriend => {
             const updatedTimeline = [...(prevFriend.timeline || []), newEvent];
             const updatedProgress = calculateProgress(updatedTimeline);
+            const updatedFriend = { ...prevFriend, timeline: updatedTimeline, progress: updatedProgress };
+            const progressPercent = updateProgressBar(updatedFriend);
+            updatedFriend.progressPercent = progressPercent;
 
-            const updatedFriend = {
-                ...prevFriend,
-                timeline: updatedTimeline,
-                progress: updatedProgress
-            };
+            // Only count “new partner” once per friend
+            if (isNewPartnerCommitment && !prevFriend.hasCountedAsNewPartner) {
+                updateKeyIndicators('new_partner');
+                updatedFriend.hasCountedAsNewPartner = true;
+            }
 
             if (eventType === 'contact' && !prevFriend.hasCountedAsNewContact && ['inPerson', 'call', 'text', 'social'].includes(contactMethod)) {
                 updateKeyIndicators('new_contact');
@@ -206,8 +239,6 @@ export function Friend_info() {
                 updateKeyIndicators('kiss');
             } else if (eventType === 'vulnerable') {
                 updateKeyIndicators('vulnerable');
-            } else if (eventType === 'new_partner') {
-                updateKeyIndicators('new_partner');
             } else if (['conversation', 'date', 'kiss', 'vulnerable', 'partner'].includes(eventType)) {
                 updateKeyIndicators(eventType);
             }
@@ -229,6 +260,8 @@ export function Friend_info() {
         setSelectedDiscussions([]);
         setSelectedCommitments([]);
         setVulnerableText('');
+        setOtherDiscussion('');
+        setOtherCommitment('');
         setEventDate(new Date().toISOString().slice(0, 16));
     };
 
@@ -369,17 +402,10 @@ export function Friend_info() {
                                 <div key={i} className="contact-entry d-flex align-items-center mb-2">
                                     <input
                                         type="text"
-                                        value={slot.day}
-                                        onChange={(e) => handleArrayChange('availability', i, 'day', e.target.value)}
+                                        value={slot}
+                                        onChange={(e) => handleArrayChange('availability', i, null, e.target.value)}
                                         className="form-control me-2"
-                                        placeholder="Day (e.g., Monday)"
-                                    />
-                                    <input
-                                        type="text"
-                                        value={slot.time}
-                                        onChange={(e) => handleArrayChange('availability', i, 'time', e.target.value)}
-                                        className="form-control me-2"
-                                        placeholder="Time (e.g., 2pm - 5pm)"
+                                        placeholder="e.g., Monday 2pm - 5pm"
                                     />
                                     <button type="button" className="btn btn-danger btn-sm" onClick={() => removeItem('availability', i)}>Remove</button>
                                 </div>
@@ -493,14 +519,13 @@ export function Friend_info() {
                             </ul>
                         </div>
 
-                        <div className="progress-container">
-                            <div
-                                className="progress-bar"
-                                style={{
-                                    width: `${progressPercent}%`,
-                                    backgroundColor: '#aa5555', // soft red
-                                }}
-                            />
+                        <div className="progress-wrapper d-flex align-items-center">
+                            <div className="progress-bar-container">
+                                <div
+                                    className="progress-bar-fill"
+                                    style={{ width: `${friend.progressPercent || 0}%` }}
+                                ></div>
+                            </div>
                             <span className="heart-icon">❤️</span>
                         </div>
 
@@ -525,7 +550,7 @@ export function Friend_info() {
                             <ul>
                                 {friend.availability?.length > 0 ? (
                                     friend.availability.map((a, i) => (
-                                        <li key={i}><strong>{a.day}:</strong> {a.time}</li>
+                                        <li key={i}>{a}</li>
                                     ))
                                 ) : (
                                     <li>No availability info yet</li>
@@ -606,6 +631,16 @@ export function Friend_info() {
                                         <span>{d}</span>
                                     </label>
                                 ))}
+
+                                {selectedDiscussions.includes('other') && (
+                                    <input
+                                        type="text"
+                                        className="form-control mt-2 bright-placeholder"
+                                        placeholder="Enter custom discussion topic"
+                                        value={otherDiscussion}
+                                        onChange={e => setOtherDiscussion(e.target.value)}
+                                    />
+                                )}
                             </div>
 
                             <div className="checkbox-group">
@@ -624,6 +659,16 @@ export function Friend_info() {
                                         <span>{c}</span>
                                     </label>
                                 ))}
+
+                                {selectedCommitments.includes('other') && (
+                                    <input
+                                        type="text"
+                                        className="form-control mt-2 bright-placeholder"
+                                        placeholder="Enter custom commitment"
+                                        value={otherCommitment}
+                                        onChange={e => setOtherCommitment(e.target.value)}
+                                    />
+                                )}
                             </div>
                         </>
                     )}
@@ -632,7 +677,7 @@ export function Friend_info() {
                     <textarea 
                         placeholder="Describe the vulnerable moment" 
                         value={vulnerableText} 
-                        className="friend-box"
+                        className="form-control mt-2 bright-placeholder"
                         onChange={e => setVulnerableText(e.target.value)}
                     />
                     )}

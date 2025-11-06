@@ -169,6 +169,11 @@ a.btn-link:focus {
   padding: 0 1rem;
 }
 
+.bright-placeholder::placeholder {
+  color: #e6e6e6;
+  opacity: .5;
+}
+
 footer {
   flex-shrink: 0;
   flex: 0 30px;
