@@ -10,6 +10,7 @@ export function Login({ userName, authState, onAuthChange }) {
   const [isSignup, setIsSignup] = React.useState(false);
 
   const handleLogin = async (e) => {
+    console.log('heya');
     e.preventDefault();
     if (!email || !password) return;
 
@@ -17,7 +18,6 @@ export function Login({ userName, authState, onAuthChange }) {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', 
         body: JSON.stringify({ email, password }),
       });
 

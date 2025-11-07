@@ -7,14 +7,41 @@ import { AuthState } from './auth_state';
 export function Signup({ onAuthChange }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState(null); 
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      localStorage.setItem('userName', email);
+    setError(null);
+    setIsLoading(true);
+
+    if (!email || !password) {
+      setError('Please enter both email and password.');
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.msg || 'Signup failed');
+      }
+
       onAuthChange(email, AuthState.Authenticated);
+      
       navigate('/key_indicators');
+
+    } catch (err) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,9 +68,10 @@ export function Signup({ onAuthChange }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button className="btn btn-danger" type="submit">
-            Create Account
+          <button className="btn btn-danger" type="submit" disabled={isLoading}>
+            {isLoading ? 'Signing up...' : 'Create Account'}
           </button>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
           <div className="mt-3 text-center">
             <p>Already have an account?</p>
             <button

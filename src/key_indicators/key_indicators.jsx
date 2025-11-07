@@ -128,7 +128,7 @@ export function Key_indicators() {
             window.removeEventListener('storage', handleLoad);
             window.removeEventListener('keyIndicatorsUpdated', handleLoad);
         };
-    }, [authState]);
+    }, []);
 
 
     return (

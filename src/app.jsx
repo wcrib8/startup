@@ -1,7 +1,7 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
-import { BrowserRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, NavLink, Route, Routes, useLocation, Navigate } from 'react-router-dom';
 import { Login } from './login/login';
 import { Signup } from './login/signup';
 import { Contact } from './contact/contact';
@@ -13,17 +13,11 @@ import { Submit_contact } from './submit_contact/submit_contact';
 import { AuthState } from './login/auth_state';
 
 import { ProtectedRoute } from './protected_route';
-function ProtectedRoute({ authState, children }) {
-  if (authState !== AuthState.Authenticated) {
-    return <Navigate to="/" replace />;
-  }
-  return children;
-}
 
 export default function App() {
   const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
   const [authState, setAuthState] = React.useState(
-    userName ? AuthState.Authenticated : AuthState.Unauthenticated
+    AuthState.Unauthenticated
   );
 
   function handleLogout() {
@@ -36,9 +30,11 @@ export default function App() {
   } 
 
   const handleAuthChange = (newUserName, newAuthState) => {
+    console.log('please work')
     setUserName(newUserName);
     setAuthState(newAuthState);
     if (newAuthState === AuthState.Authenticated) {
+      console.log('please work')
       localStorage.setItem('userName', newUserName);
     }
   };
