@@ -71,35 +71,6 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   res.status(204).end();
 });
 
-// make auth login for new user
-// apiRouter.post('/auth/signup', async (req, res) => {
-//     const user = await createUser(req.body.email, req.body.password);
-//     console.log('Signup body:', req.body);
-//   if (user) {
-//     user.token = uuid.v4();
-//     setAuthCookie(res, user.token);
-//     res.send({ email: user.email });
-//     return;
-//   }
-//   res.status(401).send({ msg: 'Unauthorized' });
-// })
-
-// apiRouter.post('/auth/signup', async (req, res) => {
-//   try {
-//     console.log('Signup body:', req.body);
-
-//     const user = await createUser(req.body.email, req.body.password);
-
-//     user.token = uuid.v4();
-//     setAuthCookie(res, user.token);
-//     res.send({ email: user.email });
-    
-//   } catch (err) {
-//     console.error('Signup error:', err);
-//     res.status(500).send({ msg: 'Internal server error', error: err.message });
-//   }
-// });
-
 // Middleware to verify that the user is authorized to call an endpoint
 const verifyAuth = async (req, res, next) => {
   const user = await findUser('token', req.cookies[authCookieName]);
@@ -126,32 +97,42 @@ apiRouter.post('/key_indicators', verifyAuth, async (req, res) => {
 // Get Friends
 apiRouter.get('/friends', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
-  res.send(data.friends);
+  res.send(data.friends || []);
 });
 
-// Update Friends
+// Update Friends, append instead of rewrite
 apiRouter.post('/friends', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
-  data.friends = req.body;
+  const newFriend = req.body;
+  if (!newFriend.id) {
+    newFriend.id = crypto.randomUUID();
+  }
+  if (!data.friends) data.friends = [];
+  data.friends.push(newFriend);
+  await saveUserData(req, data);
   res.send(data.friends);
 });
 
-// friends info
-apiRouter.get('/friends_info/:id', verifyAuth, async (req, res) => {
+// friends info, get one friend by id
+apiRouter.get('/friends/:id', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
-  const friend = data.friends[req.params.id];
+  const friend = (data.friends || []).find(f => f.id === req.params.id);
   if (!friend) {
-    res.status(404).send({ msg: 'Friend not found' });
-    return;
+    return res.status(404).send({ msg: 'Friend not found' });
   }
   res.send(friend);
 });
 
 // Update Friend Info
-apiRouter.post('/friends_info/:id', verifyAuth, async (req, res) => {
+apiRouter.post('/friends/:id', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
-  data.friends[req.params.id] = req.body;
-  res.send(data.friends[req.params.id]);
+  const index = data.friends.findIndex(f => f.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).send({ msg: 'Friend not found' });
+  }
+  data.friends[index] = { ...data.friends[index], ...req.body };
+  await saveUserData(req, data);
+  res.send(data.friends[index]);
 });
 
 // get last reset date
@@ -192,6 +173,14 @@ async function getUserData(req) {
   return userData[email];
 }
 
+async function saveUserData(req, data) {
+  const user = await findUser('token', req.cookies[authCookieName]);
+  if (!user) return null;
+
+  const email = user.email;
+  userData[email] = data
+  return userData[email];
+}
 
 async function createUser(email, password) {
   const passwordHash = await bcrypt.hash(password, 10);
@@ -200,7 +189,7 @@ async function createUser(email, password) {
     email: email, 
     password: passwordHash, 
     token: uuid.v4(), 
-    keyIndicators: JSON.parse(JSON.stringify(keyIndicatorsTemplate)), 
+    keyIndicators: JSON.parse(JSON.stringify(keyIndicators)), 
     friends: [],
     lastResetDate: new Date().toISOString()
   };

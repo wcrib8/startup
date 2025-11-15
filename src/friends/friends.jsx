@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import './friends.css';
+import { AuthState } from '../login/auth_state';
 
-export function Friends() {
+
+export function Friends({ authState, userName }) {
     const [friends, setFriends] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -32,10 +34,13 @@ export function Friends() {
 
             try {
                 const res = await fetch('/api/friends', {
-                    credentials: 'include', 
+                    method: 'GET',
+                    credentials: 'include',
                 });
                 if (!res.ok) throw new Error('Failed to fetch friends');
                 const data = await res.json();
+                console.log('friends from backend:', data, Array.isArray(data)); 
+
                 setFriends(data);
             } catch (err) {
                 console.error('Error loading friends:', err);
@@ -83,6 +88,8 @@ export function Friends() {
             if (!res.ok) throw new Error('Failed to save friend');
             const updatedList = await res.json(); // backend can return full updated list
 
+            console.log('updatedList from backend:', updatedList);
+
             setFriends(updatedList);
             localStorage.setItem('friends', JSON.stringify(updatedList)); // optional fallback
             closeModal();
@@ -118,12 +125,14 @@ export function Friends() {
                             </td>
                         </tr>
                     ) : (
-                        friends.map((friend, index) => (
+                        friends.map((friend, index) => {
+                            console.log(friend)
+                            return(
                             <tr key={index}>
                                 <td><span className={`status-circle ${getStatusClass(friend)}`}></span></td>
-                                <td><NavLink to={`/friend_info/${index}`}>{friend.name}</NavLink></td>
+                                <td><NavLink to={`/friend_info/${friend.id}`}>{friend.name}</NavLink></td>
                             </tr>
-                        ))
+                        )})
                     )}
                 </tbody>
             </table>

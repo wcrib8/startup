@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './friend_info.css';
+import { AuthState } from '../login/auth_state';
 
-export function Friend_info() {
+
+export function Friend_info({ authState, userName }) {
+    console.log('authState in FriendInfo:', authState);
+
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -65,55 +69,54 @@ export function Friend_info() {
         console.log(`Updated key indicator: ${type}`);
     };
 
+    const loadFriend = async () => {
+        try {
+            const response = await fetch(`/api/friends/${id}`, { credentials: 'include' });
+            const data = await response.json();
+            
+            if (!data) {
+                navigate('/friends');
+                return;
+            }
+
+            // const selectedFriend = data[friendIndex];
+            setFriend(data);
+            setEditData({
+                name: data.name || '',
+                contactInfo: data.contactInfo || [],
+                availability: data.availability || [],
+                interests: data.interests || [],
+                progress: data.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
+                timeline: data.timeline || []
+            });
+        } catch (error) {
+            console.error('Failed to load friends:', error);
+        }
+    };
 
     useEffect(() => {
+        if (authState === 'unknown') return;
         if (authState !== AuthState.Authenticated) {
-        navigate('/');
-        return;
-    }
-
-        const loadFriend = async () => {
-            try {
-                const response = await fetch('/api/friends', { credentials: 'include' });
-                const data = await response.json();
-                const friendIndex = parseInt(id, 10);
-                
-                if (isNaN(friendIndex) || !data[friendIndex]) {
-                    navigate('/friends');
-                    return;
-                }
-
-                const selectedFriend = data[friendIndex];
-                setFriend(selectedFriend);
-                setEditData({
-                    name: selectedFriend.name || '',
-                    contactInfo: selectedFriend.contactInfo || [],
-                    availability: selectedFriend.availability || [],
-                    interests: selectedFriend.interests || [],
-                    progress: selectedFriend.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } },
-                    timeline: selectedFriend.timeline || []
-                });
-            } catch (error) {
-                console.error('Failed to load friends:', error);
-            }
-        };
+            navigate('/');
+            return;
+        }
 
         loadFriend();
-    }, [id, navigate]);
+    }, [id, navigate, authState]);
 
     // WebSocket action
-    React.useEffect(() => {
-        const ws = new WebSocket('ws://localhost:4000'); // will be my WS server!!!!!
+    // React.useEffect(() => {
+    //     const ws = new WebSocket('ws://localhost:4000'); // will be my WS server!!!!!
 
-        ws.onopen = () => console.log('WebSocket connected');
-        ws.onmessage = (event) => console.log('Received:', event.data);
-        ws.onerror = (error) => console.error('WebSocket error:', error);
-        ws.onclose = () => console.log('WebSocket closed');
+    //     ws.onopen = () => console.log('WebSocket connected');
+    //     ws.onmessage = (event) => console.log('Received:', event.data);
+    //     ws.onerror = (error) => console.error('WebSocket error:', error);
+    //     ws.onclose = () => console.log('WebSocket closed');
 
-        setSocket(ws);
+    //     setSocket(ws);
 
-        return () => ws.close(); 
-    }, []); 
+    //     return () => ws.close(); 
+    // }, []); 
 
 
     const handleEditToggle = () => setIsEditing((prev) => !prev);

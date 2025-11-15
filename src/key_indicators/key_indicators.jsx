@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './key_indicators.css';
+import { AuthState } from '../login/auth_state';
 
-export function Key_indicators() {
+export function Key_indicators({ authState, userName }) {
+    const [indicators, setIndicators] = useState([]);
+
     const defaultIndicators = [
     { label: 'New Contact', count: 0 },
     { label: 'Meaningful Conversation', count: 0 },
@@ -109,7 +112,7 @@ export function Key_indicators() {
 
     useEffect(() => {
         if (authState !== AuthState.Authenticated) {
-            setKeyIndicators([]);
+            setIndicators([]);
             setFriends([]);
             setLoading(false);
             return;

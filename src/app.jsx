@@ -15,9 +15,10 @@ import { AuthState } from './login/auth_state';
 import { ProtectedRoute } from './protected_route';
 
 export default function App() {
-  const [userName, setUserName] = React.useState(localStorage.getItem('userName') || '');
+  const storedUser = localStorage.getItem('userName');
+  const [userName, setUserName] = React.useState(storedUser || '');
   const [authState, setAuthState] = React.useState(
-    AuthState.Unauthenticated
+    storedUser ? AuthState.Authenticated : AuthState.Unauthenticated
   );
 
   function handleLogout() {
