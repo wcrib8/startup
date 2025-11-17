@@ -12,7 +12,7 @@ export function Friend_info({ authState, userName }) {
 
     const [showAddEvent, setShowAddEvent] = useState(false);
     const [eventType, setEventType] = useState('contact');
-    const [contactMethod, setContactMethod] = useState('');
+    const [contactMethod, setContactMethod] = useState('inPerson');
     const [selectedDiscussions, setSelectedDiscussions] = useState([]);
     const [selectedCommitments, setSelectedCommitments] = useState([]);
     const [vulnerableText, setVulnerableText] = useState('');
@@ -37,7 +37,7 @@ export function Friend_info({ authState, userName }) {
         timeline: [],
     });
 
-    const updateKeyIndicators = (type) => {
+    const updateKeyIndicators = async (type) => {
         const stored = JSON.parse(localStorage.getItem('keyIndicators')) || [
             { label: 'New Contact', count: 0 },
             { label: 'Meaningful Conversation', count: 0 },
@@ -62,9 +62,24 @@ export function Friend_info({ authState, userName }) {
         });
 
         localStorage.setItem('keyIndicators', JSON.stringify(updated));
-
         window.dispatchEvent(new Event('keyIndicatorsUpdated'));
 
+        // save to backend
+        try {
+            const response = await fetch('/api/key_indicators', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ indicators: updated })
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to save indicators');
+            }
+
+            console.log('Saved indicators to backend');
+        } catch (err) {
+            console.error('Error saving indicators:', err);
+        }
 
         console.log(`Updated key indicator: ${type}`);
     };
@@ -95,7 +110,7 @@ export function Friend_info({ authState, userName }) {
     };
 
     useEffect(() => {
-        if (authState === 'unknown') return;
+        if (authState === AuthState.Unknown) return;
         if (authState !== AuthState.Authenticated) {
             navigate('/');
             return;
@@ -128,19 +143,32 @@ export function Friend_info({ authState, userName }) {
 
     const handleSave = async () => {
         try {
-            const updatedFriend = { ...friend, ...editData };
+            // const updatedFriend = { ...friend, ...editData };
+            // changed from above to below to retrieve newest progress and help backend
+            const updatedFriend = {
+                ...friend,
+                name: editData.name,
+                contactInfo: editData.contactInfo,
+                availability: editData.availability,
+                interests: editData.interests
+            };
 
-            const response = await fetch('/api/friends', {
+            const response = await fetch(`/api/friends/${friend.id}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
                 body: JSON.stringify(updatedFriend),
             });
 
-            const updatedFriends = await response.json();
-            setFriend(updatedFriend);
+            if (!response.ok) {
+                throw new Error(`Failed to update friend: ${response.status}`);
+            }  // added when fixing api call for friend info to update discussions etc.
+
+            // const updatedFriends = await response.json();
+            const savedFriend = await response.json();
+            setFriend(savedFriend);
             setIsEditing(false);
-            console.log('Friend saved to backend:', updatedFriends);
+            console.log('Friend saved to backend:', savedFriend);
         } catch (err) {
             console.error('Error saving friend:', err);
         }
@@ -284,6 +312,14 @@ export function Friend_info({ authState, userName }) {
             const progressPercent = updateProgressBar(updatedFriend);
             updatedFriend.progressPercent = progressPercent;
 
+            // added to also ensure correct friend data nad backend connection.
+            setEditData(prev => ({
+                ...prev,
+                timeline: updatedTimeline,
+                progress: updatedProgress,
+                progressPercent: progressPercent,
+            }));
+
             // Only count “new partner” once per friend
             if (isNewPartnerCommitment && !prevFriend.hasCountedAsNewPartner) {
                 updateKeyIndicators('new_partner');
@@ -306,13 +342,30 @@ export function Friend_info({ authState, userName }) {
             }
 
             const friends = JSON.parse(localStorage.getItem('friends')) || [];
-            friends[id] = updatedFriend;
+            const index = friends.findIndex(f => f.id === updatedFriend.id);
+
+            if (index >= 0) friends[index] = updatedFriend;
+            else friends.push(updatedFriend);
             localStorage.setItem('friends', JSON.stringify(friends));
+
+            // this was replaced by above 4 lines
+            // friends[id] = updatedFriend;
+            // localStorage.setItem('friends', JSON.stringify(friends));
 
             window.dispatchEvent(new Event('keyIndicatorsUpdated'));
 
-            setEditData(prev => ({ ...prev, timeline: updatedTimeline, progress: updatedProgress }));
+            setEditData(prev => ({ ...prev, timeline: updatedTimeline, progress: updatedProgress, progressPercent: progressPercent, }));
 
+            // added to save to backend
+            fetch(`/api/friends/${updatedFriend.id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(updatedFriend),
+            }).catch(err =>
+                console.error("Failed to save friend event:", err)
+            );
+            
             return updatedFriend;
         });
 

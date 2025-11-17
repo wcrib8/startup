@@ -91,6 +91,7 @@ apiRouter.get('/key_indicators', verifyAuth, async (req, res) => {
 apiRouter.post('/key_indicators', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
   data.keyIndicators = req.body;
+  await saveUserData(req, data);  // added to save KIs to user
   res.send(data.keyIndicators);
 });
 
@@ -102,15 +103,31 @@ apiRouter.get('/friends', verifyAuth, async (req, res) => {
 
 // Update Friends, append instead of rewrite
 apiRouter.post('/friends', verifyAuth, async (req, res) => {
-  const data = await getUserData(req);
-  const newFriend = req.body;
-  if (!newFriend.id) {
-    newFriend.id = crypto.randomUUID();
+  try {
+    const data = await getUserData(req);
+    const newFriend = req.body;
+    if (!newFriend.id) {
+      newFriend.id = crypto.randomUUID();
+    }
+    if (!data.friends) data.friends = [];
+
+    // check if friend already exists
+    const index = data.friends.findIndex(f => f.id === newFriend.id);
+    if (index >= 0 ) {
+      data.friends[index] = newFriend //update existing friend
+    } else {
+      data.friends.push(newFriend);
+    }
+
+    // data.friends.push(newFriend);
+    await saveUserData(req, data);
+    // res.send(data.friends);
+    res.json(data.friends);
+
+  } catch (err) {
+    console.error("Error while saving friend:", err);
+    res.status(500).send({ msg: "Could not save friend" });
   }
-  if (!data.friends) data.friends = [];
-  data.friends.push(newFriend);
-  await saveUserData(req, data);
-  res.send(data.friends);
 });
 
 // friends info, get one friend by id

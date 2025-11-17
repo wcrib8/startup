@@ -21,9 +21,11 @@ export function Key_indicators({ authState, userName }) {
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        setIndicators(data);
-        localStorage.setItem('keyIndicators', JSON.stringify(data));
-        return data;
+
+        // changed data to data.indicators
+        setIndicators(data.indicators);
+        localStorage.setItem('keyIndicators', JSON.stringify(data.indicators));
+        return data.indicators;
     } catch (err) {
         console.warn('[KeyIndicators] Failed to load from backend, falling back to localStorage:', err);
         const saved = JSON.parse(localStorage.getItem('keyIndicators')) || defaultIndicators;
@@ -33,26 +35,30 @@ export function Key_indicators({ authState, userName }) {
     };
 
     const saveIndicatorsToBackend = async (updated) => {
-    try {
-        const res = await fetch('/api/key_indicators', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(updated),
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        setIndicators(data);
-        localStorage.setItem('keyIndicators', JSON.stringify(data));
-        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
-        return data;
-    } catch (err) {
-        console.error('[KeyIndicators] Failed to save to backend:', err);
-        setIndicators(updated);
-        localStorage.setItem('keyIndicators', JSON.stringify(updated));
-        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
-        return updated;
-    }
+        // similarly changed data to data.indicators, updated to {indicators: updated}
+        try {
+            const res = await fetch('/api/key_indicators', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({indicators: updated}),
+            });
+
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const data = await res.json();
+            setIndicators(data.indicators);
+            localStorage.setItem('keyIndicators', JSON.stringify(data.indicators));
+            window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+            return data.indicators;
+
+        } catch (err) {
+            console.error('[KeyIndicators] Failed to save to backend:', err);
+            // setIndicators(updated);
+            localStorage.setItem('keyIndicators', JSON.stringify(updated));
+            window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+            return updated;
+        }
     };
 
     const getLastResetDateFromBackend = async () => {
