@@ -15,23 +15,36 @@ export function Key_indicators({ authState, userName }) {
     ];
 
     const loadIndicatorsFromBackend = async () => {
-    try {
-        const res = await fetch('/api/key_indicators', {
-        credentials: 'include',
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+        try {
+            const res = await fetch('/api/key_indicators', {
+            credentials: 'include',
+            });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
 
-        // changed data to data.indicators
-        setIndicators(data.indicators);
-        localStorage.setItem('keyIndicators', JSON.stringify(data.indicators));
-        return data.indicators;
-    } catch (err) {
-        console.warn('[KeyIndicators] Failed to load from backend, falling back to localStorage:', err);
-        const saved = JSON.parse(localStorage.getItem('keyIndicators')) || defaultIndicators;
-        setIndicators(saved);
-        return saved;
-    }
+            // changed data to data.indicators (or arr), adding check for object or map so indicators will still show
+            const arr = Array.isArray(data) ? data : data.indicators || [];
+            setIndicators(arr);
+            localStorage.setItem('keyIndicators', JSON.stringify(arr));
+            return arr;
+        } catch (err) {
+            console.warn('[KeyIndicators] Failed to load from backend, falling back to localStorage:', err);
+
+            // const saved = JSON.parse(localStorage.getItem('keyIndicators')) || defaultIndicators;
+            const savedRaw = localStorage.getItem('keyIndicators');
+            let saved = [];
+            if (savedRaw) {
+                try {
+                    const parsed = JSON.parse(savedRaw);
+                    saved = Array.isArray(parsed) ? parsed : parsed.indicators || [];
+                } catch {
+                    saved = [];
+                }
+            }
+            const finalSaved = saved.length ? saved : defaultIndicators;
+            setIndicators(finalSaved);
+            return finalSaved;
+        }
     };
 
     const saveIndicatorsToBackend = async (updated) => {
