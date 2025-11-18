@@ -21,13 +21,14 @@ let keyIndicators = [
     ];
 
 
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(express.static(rootDir));
+// app.use(express.static(rootDir));
+app.use(express.static('public'));
 
-let apiRouter = express.Router();
+var apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 // CreateAuth a new user
@@ -171,9 +172,9 @@ app.use(function (err, req, res, next) {
 });
 
 // Return the application's default page if the path is unknown
-// app.use((_req, res) => {
-//   res.sendFile('index.html', { root: rootDir });
-// });
+app.use((_req, res) => {
+  res.sendFile('index.html', { root: 'public' });
+});
 
 async function getUserData(req) {
   const user = await findUser('token', req.cookies[authCookieName]);
