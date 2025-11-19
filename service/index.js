@@ -5,20 +5,22 @@ const bcrypt = require('bcryptjs');
 const uuid = require('uuid');
 const express = require('express');
 const app = express();
+const DB = require('./database.js');
 
 const authCookieName = 'token';
 const rootDir = path.join(__dirname, '..');
 
-let users = [];
-let userData = {}; 
-let keyIndicators = [
-        { label: 'New Contact', count: 0 },
-        { label: 'Meaningful Conversation', count: 0 },
-        { label: 'Date', count: 0 },
-        { label: 'Kiss', count: 0 },
-        { label: 'Vulnerable Moment', count: 0 },
-        { label: 'New Partner', count: 0 },
-    ];
+// removed for DB
+// let users = [];
+// let userData = {}; 
+// let keyIndicators = [
+//         { label: 'New Contact', count: 0 },
+//         { label: 'Meaningful Conversation', count: 0 },
+//         { label: 'Date', count: 0 },
+//         { label: 'Kiss', count: 0 },
+//         { label: 'Vulnerable Moment', count: 0 },
+//         { label: 'New Partner', count: 0 },
+//     ];
 
 
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
@@ -28,7 +30,7 @@ app.use(cookieParser());
 // app.use(express.static(rootDir));
 app.use(express.static('public'));
 
-var apiRouter = express.Router();
+const apiRouter = express.Router();
 app.use(`/api`, apiRouter);
 
 // CreateAuth a new user
@@ -54,6 +56,7 @@ apiRouter.post('/auth/login', async (req, res) => {
   if (user) {
     if (await bcrypt.compare(req.body.password, user.password)) {
       user.token = uuid.v4();
+      await DB.updateUser(user);
       setAuthCookie(res, user.token);
       res.send({ email: user.email });
       return;
@@ -67,6 +70,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   const user = await findUser('token', req.cookies[authCookieName]);
   if (user) {
     delete user.token;
+    DB.updateUser(user);
   }
   res.clearCookie(authCookieName);
   res.status(204).end();
@@ -84,7 +88,8 @@ const verifyAuth = async (req, res, next) => {
 
 // Get KeyIndicators
 apiRouter.get('/key_indicators', verifyAuth, async (req, res) => {
-  const data = await getUserData(req);
+  // const data = await getUserData(req);
+  const data = await DB.getUserData(req);
   res.send(data.keyIndicators);
 });
 
@@ -218,7 +223,11 @@ async function createUser(email, password) {
 async function findUser(field, value) {
   if  (!value) return null;
 
-  return users.find((user) => user[field] === value);
+  if (field === 'token') {
+    return DB.getUserByToken(value);
+  }
+  return DB.getUser(value);
+  // return users.find((user) => user[field] === value);
 }
 
 function setAuthCookie(res, authToken) {
@@ -231,7 +240,6 @@ function setAuthCookie(res, authToken) {
   });
 }
 
-
-app.listen(port, () => {
+const httpService = app.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
