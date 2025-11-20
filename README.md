@@ -100,8 +100,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
+- [x] **Stores data in MongoDB** - User data is all updated to and stored in MongoDB, added database.js, made changes to index.js
+- [x] **Stores credentials in MongoDB** - all user data such as friends, KIS, and also tokens, email, password is all connected to a user token, is stored in DB.
 
 ## 🚀 WebSocket deliverable
 
