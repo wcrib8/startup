@@ -414,6 +414,14 @@ I learned about the efficiency of using React, being able to use routes and comp
 
 There is a lot going on with React. I think the most important things are useState and useEffect, these can apply values to elements and objects that let you manipulate what appears on the screen, like counters, or modals, or buttons responding and having an action. This makes users aactually able to interact with the application.
 
+### Service
+
+Service is tough, but it allows for user data to be saved in the backend, not just locally. Allows for certain data to be stored elsewhere, separate backend and frontend functions.
+
+### Database
+
+Next step to service, using a database allows for user data to persist, and for data to be shared globally. also makes it easier for users to continue to use and update service. Changes needed to be made to save data with respect to the database instead of locally and backend.
+
 
 
 ## Midterm Notes
