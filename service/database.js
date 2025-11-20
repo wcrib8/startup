@@ -9,6 +9,7 @@ const userCollection = db.collection('user');
 // This will asynchronously test the connection and exit the process if it fails
 (async function testConnection() {
   try {
+    await client.connect();  //  added because I have mongo 7.0.0?
     await db.command({ ping: 1 });
     console.log(`Connect to database`);
   } catch (ex) {
@@ -30,7 +31,12 @@ async function addUser(user) {
 }
 
 async function updateUser(user) {
-  await userCollection.updateOne({ email: user.email }, { $set: user });
+//   await userCollection.updateOne({ email: user.email }, { $set: user });
+const { _id, ...updateFields } = user; // Remove _id if present
+  await userCollection.updateOne(
+    { email: user.email }, 
+    { $set: updateFields }
+  );
 }
 
 module.exports = {

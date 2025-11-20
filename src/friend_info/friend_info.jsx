@@ -25,7 +25,7 @@ export function Friend_info({ authState, userName }) {
 
     const [friend, setFriend] = React.useState({
         hasCountedAsNewContact: false,
-        hasCountedAsNewParnter: false
+        hasCountedAsNewPartner: false
     });
     const [isEditing, setIsEditing] = React.useState(false);
     const [editData, setEditData] = React.useState({
@@ -37,51 +37,55 @@ export function Friend_info({ authState, userName }) {
         timeline: [],
     });
 
-    const updateKeyIndicators = async (type) => {
-        const stored = JSON.parse(localStorage.getItem('keyIndicators')) || [
-            { label: 'New Contact', count: 0 },
-            { label: 'Meaningful Conversation', count: 0 },
-            { label: 'Date', count: 0 },
-            { label: 'Kiss', count: 0 },
-            { label: 'Vulnerable Moment', count: 0 },
-            { label: 'New Partner', count: 0 },
-        ];
-
-        let updated = stored.map(ind => {
-            if (
-                (type === 'new_contact' && ind.label === 'New Contact') ||
-                (type === 'meaningful_conversation' && ind.label === 'Meaningful Conversation') ||
-                (type === 'date' && ind.label === 'Date') ||
-                (type === 'kiss' && ind.label === 'Kiss') ||
-                (type === 'vulnerable' && ind.label === 'Vulnerable Moment') ||
-                (type === 'new_partner' && ind.label === 'New Partner')
-            ) {
-                return { ...ind, count: ind.count + 1 };
-            }
-            return ind;
-        });
-
-        localStorage.setItem('keyIndicators', JSON.stringify(updated));
-        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
-
-        // save to backend
+    const updateKeyIndicators = async (types) => {
         try {
+            // Make types always an array   
+            const typesArray = Array.isArray(types) ? types : [types];
+            
             const response = await fetch('/api/key_indicators', {
+                credentials: 'include'
+            });
+            const stored = await response.json();
+
+            let updated = stored.map(ind => {
+                let increment = 0;
+                
+                typesArray.forEach(type => {
+                    if (
+                        (type === 'new_contact' && ind.label === 'New Contact') ||
+                        (type === 'meaningful_conversation' && ind.label === 'Meaningful Conversation') ||
+                        (type === 'date' && ind.label === 'Date') ||
+                        (type === 'kiss' && ind.label === 'Kiss') ||
+                        (type === 'vulnerable' && ind.label === 'Vulnerable Moment') ||
+                        (type === 'new_partner' && ind.label === 'New Partner')
+                    ) {
+                        increment++;
+                    }
+                });
+                
+                if (increment > 0) {
+                    return { ...ind, count: ind.count + increment };
+                }
+                return ind;
+            });
+
+            // Save to backend
+            const saveResponse = await fetch('/api/key_indicators', {
                 method: 'POST',
                 headers: {'Content-Type': 'application/json'},
+                credentials: 'include',
                 body: JSON.stringify({ indicators: updated })
             });
 
-            if (!response.ok) {
+            if (!saveResponse.ok) {
                 throw new Error('Failed to save indicators');
             }
 
-            console.log('Saved indicators to backend');
+            window.dispatchEvent(new Event('keyIndicatorsUpdated'));
+            console.log(`Updated key indicators: ${typesArray.join(', ')}`);
         } catch (err) {
             console.error('Error saving indicators:', err);
         }
-
-        console.log(`Updated key indicator: ${type}`);
     };
 
     const loadFriend = async () => {
@@ -143,8 +147,6 @@ export function Friend_info({ authState, userName }) {
 
     const handleSave = async () => {
         try {
-            // const updatedFriend = { ...friend, ...editData };
-            // changed from above to below to retrieve newest progress and help backend
             const updatedFriend = {
                 ...friend,
                 name: editData.name,
@@ -164,7 +166,6 @@ export function Friend_info({ authState, userName }) {
                 throw new Error(`Failed to update friend: ${response.status}`);
             }  // added when fixing api call for friend info to update discussions etc.
 
-            // const updatedFriends = await response.json();
             const savedFriend = await response.json();
             setFriend(savedFriend);
             setIsEditing(false);
@@ -284,7 +285,7 @@ export function Friend_info({ authState, userName }) {
         return progressPercent;
     };
 
-    const handleAddEvent = () => {
+    const handleAddEvent = async () => {
         const newEvent = {
             label: eventType,
             date: eventDate,
@@ -305,69 +306,68 @@ export function Friend_info({ authState, userName }) {
             c.toLowerCase().includes('girlfriend') || c.toLowerCase().includes('boyfriend')
         );
 
-        setFriend(prevFriend => {
-            const updatedTimeline = [...(prevFriend.timeline || []), newEvent];
-            const updatedProgress = calculateProgress(updatedTimeline);
-            const updatedFriend = { ...prevFriend, timeline: updatedTimeline, progress: updatedProgress };
-            const progressPercent = updateProgressBar(updatedFriend);
-            updatedFriend.progressPercent = progressPercent;
+        const indicatorsToUpdate = [];
+        const updatedTimeline = [...(friend.timeline || []), newEvent];
+        const updatedProgress = calculateProgress(updatedTimeline);
+        const progressPercent = updateProgressBar({
+            ...friend,
+            timeline: updatedTimeline,
+            progress: updatedProgress
+        });
 
-            // added to also ensure correct friend data nad backend connection.
-            setEditData(prev => ({
-                ...prev,
-                timeline: updatedTimeline,
-                progress: updatedProgress,
-                progressPercent: progressPercent,
-            }));
+        const updatedFriend = {
+            ...friend,
+            timeline: updatedTimeline,
+            progress: updatedProgress,
+            progressPercent: progressPercent
+        };
 
-            // Only count “new partner” once per friend
-            if (isNewPartnerCommitment && !prevFriend.hasCountedAsNewPartner) {
-                updateKeyIndicators('new_partner');
-                updatedFriend.hasCountedAsNewPartner = true;
-            }
+        // Determine which indicators to update
+        if (isNewPartnerCommitment && !friend.hasCountedAsNewPartner) {
+            indicatorsToUpdate.push('new_partner');
+            updatedFriend.hasCountedAsNewPartner = true;
+        }
 
-            if (eventType === 'contact' && !prevFriend.hasCountedAsNewContact && ['inPerson', 'call', 'text', 'social'].includes(contactMethod)) {
-                updateKeyIndicators('new_contact');
-                updatedFriend.hasCountedAsNewContact = true;
-            } else if (eventType === 'conversation' && selectedDiscussions.length > 0) {
-                updateKeyIndicators('meaningful_conversation');
-            } else if (eventType === 'date') {
-                updateKeyIndicators('date');
-            } else if (eventType === 'kiss') {
-                updateKeyIndicators('kiss');
-            } else if (eventType === 'vulnerable') {
-                updateKeyIndicators('vulnerable');
-            } else if (['conversation', 'date', 'kiss', 'vulnerable', 'partner'].includes(eventType)) {
-                updateKeyIndicators(eventType);
-            }
+        if (eventType === 'contact' && !friend.hasCountedAsNewContact && ['inPerson', 'call', 'text', 'social'].includes(contactMethod)) {
+            indicatorsToUpdate.push('new_contact');
+            updatedFriend.hasCountedAsNewContact = true;
+        } else if (eventType === 'conversation' && selectedDiscussions.length > 0) {
+            indicatorsToUpdate.push('meaningful_conversation');
+        } else if (eventType === 'date') {
+            indicatorsToUpdate.push('date');
+        } else if (eventType === 'kiss') {
+            indicatorsToUpdate.push('kiss');
+        } else if (eventType === 'vulnerable') {
+            indicatorsToUpdate.push('vulnerable');
+        }
 
-            const friends = JSON.parse(localStorage.getItem('friends')) || [];
-            const index = friends.findIndex(f => f.id === updatedFriend.id);
+        // Update state
+        setFriend(updatedFriend);
+        setEditData(prev => ({
+            ...prev,
+            timeline: updatedTimeline,
+            progress: updatedProgress,
+            progressPercent: progressPercent,
+        }));
 
-            if (index >= 0) friends[index] = updatedFriend;
-            else friends.push(updatedFriend);
-            localStorage.setItem('friends', JSON.stringify(friends));
-
-            // this was replaced by above 4 lines
-            // friends[id] = updatedFriend;
-            // localStorage.setItem('friends', JSON.stringify(friends));
-
-            window.dispatchEvent(new Event('keyIndicatorsUpdated'));
-
-            setEditData(prev => ({ ...prev, timeline: updatedTimeline, progress: updatedProgress, progressPercent: progressPercent, }));
-
-            // added to save to backend
-            fetch(`/api/friends/${updatedFriend.id}`, {
+        // Save friend to backend
+        try {
+            await fetch(`/api/friends/${updatedFriend.id}`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(updatedFriend),
-            }).catch(err =>
-                console.error("Failed to save friend event:", err)
-            );
-            
-            return updatedFriend;
-        });
+            });
+        } catch (err) {
+            console.error("Failed to save friend event:", err);
+        }
+
+        // Update all indicators in one call
+        if (indicatorsToUpdate.length > 0) {
+            await updateKeyIndicators(indicatorsToUpdate);
+        }
+
+        window.dispatchEvent(new Event('keyIndicatorsUpdated'));
 
         setShowAddEvent(false);
         setEventType('');

@@ -1,7 +1,7 @@
 const path = require('path');
-
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 const uuid = require('uuid');
 const express = require('express');
 const app = express();
@@ -10,24 +10,18 @@ const DB = require('./database.js');
 const authCookieName = 'token';
 const rootDir = path.join(__dirname, '..');
 
-// removed for DB
-// let users = [];
-// let userData = {}; 
-// let keyIndicators = [
-//         { label: 'New Contact', count: 0 },
-//         { label: 'Meaningful Conversation', count: 0 },
-//         { label: 'Date', count: 0 },
-//         { label: 'Kiss', count: 0 },
-//         { label: 'Vulnerable Moment', count: 0 },
-//         { label: 'New Partner', count: 0 },
-//     ];
-
-
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
+const keyIndicators = [
+  { label: 'New Contact', count: 0 },
+  { label: 'Meaningful Conversation', count: 0 },
+  { label: 'Date', count: 0 },
+  { label: 'Kiss', count: 0 },
+  { label: 'Vulnerable Moment', count: 0 },
+  { label: 'New Partner', count: 0 },
+];
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(express.static(rootDir));
 app.use(express.static('public'));
 
 const apiRouter = express.Router();
@@ -36,18 +30,23 @@ app.use(`/api`, apiRouter);
 // CreateAuth a new user
 apiRouter.post('/auth/signup', async (req, res) => {
   try {
-    if (await findUser('email', req.body.email)) {
-      res.status(409).send({ msg: 'Existing user' });
-    } else {
-      const user = await createUser(req.body.email, req.body.password);
+    const { email, password } = req.body;  // added for DB
 
-      setAuthCookie(res, user.token);
-      res.send({ email: user.email });
+    if (await findUser('email', email)) {
+      return res.status(409).send({ msg: 'Existing user' });
+    }
+
+    // build user and insert into database
+    const user = await createUser({ email, password });
+
+    // Auth cookie
+    setAuthCookie(res, user.token);
+
+    res.send({ email: user.email });
+  } catch (error) {
+    console.error('Error during signup:', error); // Log the error detail
+    res.status(500).send({ msg: 'Internal server error occurred during signup.' });
   }
-} catch (error) {
-  console.error('Error during signup:', error); // Log the error detail
-  res.status(500).send({ msg: 'Internal server error occurred during signup.' });
-}
 });
 
 // GetAuth login an existing user
@@ -88,15 +87,20 @@ const verifyAuth = async (req, res, next) => {
 
 // Get KeyIndicators
 apiRouter.get('/key_indicators', verifyAuth, async (req, res) => {
-  // const data = await getUserData(req);
-  const data = await DB.getUserData(req);
+  const data = await getUserData(req);
   res.send(data.keyIndicators);
 });
 
 // Update KeyIndicators
 apiRouter.post('/key_indicators', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
-  data.keyIndicators = req.body;
+
+  // Handle both array or { indicators: [...] } formats, DB update
+  const updatedIndicators = Array.isArray(req.body)
+    ? req.body
+    : req.body.indicators || [];
+
+  data.keyIndicators = updatedIndicators;
   await saveUserData(req, data);  // added to save KIs to user
   res.send(data.keyIndicators);
 });
@@ -119,11 +123,36 @@ apiRouter.post('/friends', verifyAuth, async (req, res) => {
 
     // check if friend already exists
     const index = data.friends.findIndex(f => f.id === newFriend.id);
+
+    const appendArrayField = (existing = [], incoming) => {
+      if (!incoming) return existing;
+      return existing.concat(Array.isArray(incoming) ? incoming : [incoming]);
+    };
+
     if (index >= 0 ) {
-      data.friends[index] = newFriend //update existing friend
+      const existingFriend = data.friends[index]; // added with DB
+
+      data.friends[index] = {
+        ...existingFriend,
+        ...newFriend,
+        discussions: appendArrayField(existingFriend.discussions, newFriend.discussions),
+        commitments: appendArrayField(existingFriend.commitments, newFriend.commitments),
+        progress: appendArrayField(existingFriend.progress, newFriend.progress),
+        timeline: appendArrayField(existingFriend.timeline, newFriend.timeline)
+      }; //update existing friend
     } else {
+      // make sure new friend array fields initialized
+      newFriend.discussions = appendArrayField([], newFriend.discussions);
+      newFriend.commitments = appendArrayField([], newFriend.commitments);
+      newFriend.progress = appendArrayField([], newFriend.progress);
+      newFriend.timeline = appendArrayField([], newFriend.timeline);
+      newFriend.hasCountedAsNewContact = false;
+      newFriend.hasCountedAsNewPartner = false;
+
       data.friends.push(newFriend);
     }
+
+    const friend = data.friends[index >= 0 ? index : data.friends.length - 1];
 
     // data.friends.push(newFriend);
     await saveUserData(req, data);
@@ -168,6 +197,7 @@ apiRouter.get('/key_indicators/reset_date', verifyAuth, async (req, res) => {
 apiRouter.post('/key_indicators/reset_date', verifyAuth, async (req, res) => {
   const data = await getUserData(req);
   data.lastResetDate = req.body.lastResetDate;
+  await saveUserData(req, data);
   res.send({ lastResetDate: data.lastResetDate });
 });
 
@@ -185,38 +215,64 @@ async function getUserData(req) {
   const user = await findUser('token', req.cookies[authCookieName]);
   if (!user) return null;
 
-  const email = user.email;
-  if (!userData[email]) {
-    userData[email] = {
-      keyIndicators: JSON.parse(JSON.stringify(keyIndicators)),
-      friends: [],
-      lastResetDate: new Date().toISOString()
-    };
+  if (!user.keyIndicators) {
+    user.keyIndicators = [];
   }
-  return userData[email];
+  if (!user.friends) {
+    user.friends = [];
+  }
+  if (!user.lastResetDate) {
+    user.lastResetDate = new Date().toISOString();
+  }
+
+  // added to fix DB problem with contact value starting as true
+  if (user.friends) {
+    user.friends.forEach(f => {
+      if (typeof f.hasCountedAsNewContact !== 'boolean') {
+        f.hasCountedAsNewContact = false;
+      }
+      if (typeof f.hasCountedAsNewPartner !== 'boolean') {
+        f.hasCountedAsNewPartner = false;
+      }
+    });
+  }
+
+  await DB.updateUser(user);
+
+  return user;
 }
 
 async function saveUserData(req, data) {
   const user = await findUser('token', req.cookies[authCookieName]);
   if (!user) return null;
 
-  const email = user.email;
-  userData[email] = data
-  return userData[email];
+  const updatedUser = {
+    email: user.email,
+    password: user.password,
+    token: user.token,
+    keyIndicators: data.keyIndicators,
+    friends: data.friends,
+    lastResetDate: data.lastResetDate ?? user.lastResetDate
+  }
+  console.log(user);
+  console.log("updated user:", updatedUser.friends);
+  await DB.updateUser(updatedUser);
+  return updatedUser;
 }
 
-async function createUser(email, password) {
-  const passwordHash = await bcrypt.hash(password, 10);
+// add userInput to work with DB, signup creates userInput
+async function createUser(userInput) {
+  const passwordHash = await bcrypt.hash(userInput.password, 10);
 
   const user = { 
-    email: email, 
+    email: userInput.email, 
     password: passwordHash, 
     token: uuid.v4(), 
-    keyIndicators: JSON.parse(JSON.stringify(keyIndicators)), 
-    friends: [],
-    lastResetDate: new Date().toISOString()
+    keyIndicators: userInput.keyIndicators ?? keyIndicators,
+    friends: userInput.friends ?? [],
+    lastResetDate: userInput.lastResetDate ?? new Date().toISOString(),
   };
-  users.push(user);
+  await DB.addUser(user);
   return user;
 }
 
@@ -227,7 +283,6 @@ async function findUser(field, value) {
     return DB.getUserByToken(value);
   }
   return DB.getUser(value);
-  // return users.find((user) => user[field] === value);
 }
 
 function setAuthCookie(res, authToken) {
