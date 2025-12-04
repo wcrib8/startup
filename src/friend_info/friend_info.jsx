@@ -278,6 +278,36 @@ export function Friend_info({ authState, userName, socket }) {
         }
     };
 
+    const handleStopGoingOut = async () => {
+        const confirmDelete = window.confirm(
+            `Are you sure you want to stop going out with ${friend.name}? This will remove them from your friends list.`
+        );
+        
+        if (!confirmDelete) {
+            console.log('Delete cancelled');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/friends/${friend.id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+            
+            if (response.ok) {
+                console.log('Friend deleted');
+                alert(`${friend.name} has been removed from your friends list.`);
+                navigate('/friends');
+            } else {
+                console.error('Failed to delete friend');
+                alert('Failed to remove friend. Please try again.');
+            }
+        } catch (err) {
+            console.error('Error deleting friend:', err);
+            alert('An error occurred. Please try again.');
+        }
+    };
+
 
     const updateProgressBar = (friendData) => {
         // Collect discussions and commitments from timeline
@@ -724,14 +754,21 @@ export function Friend_info({ authState, userName, socket }) {
                 )}
 
                 {!isEditing && (
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
-                        <button className="btn btn-danger" onClick={() => setShowAddEvent(true)}>
-                            + Add Event
-                        </button>
-                        <button className="btn btn-danger" onClick={() => setShowReferModal(true)}>
-                            Refer
-                        </button>
-                    </div>
+                    <>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1rem' }}>
+                            <button className="btn btn-danger" onClick={() => setShowAddEvent(true)}>
+                                + Add Event
+                            </button>
+                            <div style={{ display: 'flex', gap: '0.5rem' }}>
+                                <button className="btn btn-danger" onClick={handleStopGoingOut}>
+                                    Stop Going Out
+                                </button>
+                                <button className="btn btn-danger" onClick={() => setShowReferModal(true)}>
+                                    Refer
+                                </button>
+                            </div>
+                        </div>
+                    </>
                 )}
             </section>
 
