@@ -4,7 +4,7 @@ import './friend_info.css';
 import { AuthState } from '../login/auth_state';
 
 
-export function Friend_info({ authState, userName }) {
+export function Friend_info({ authState, userName, socket }) {
     console.log('authState in FriendInfo:', authState);
     console.log('userName in FriendInfo:', userName);
 
@@ -21,7 +21,6 @@ export function Friend_info({ authState, userName }) {
     const [otherDiscussion, setOtherDiscussion] = useState('');
     const [otherCommitment, setOtherCommitment] = useState('');
     
-    const [socket, setSocket] = React.useState(null);
     const [showReferModal, setShowReferModal] = useState(false);
     const [referRecipient, setReferRecipient] = useState('');
     const [availableUsers, setAvailableUsers] = useState([]);
@@ -125,44 +124,6 @@ export function Friend_info({ authState, userName }) {
 
         loadFriend();
     }, [id, navigate, authState]);
-
-    // WebSocket action
-    useEffect(() => {
-        if (authState !== AuthState.Authenticated || !userName) return;
-
-        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const wsUrl = `${protocol}//${window.location.host}/ws`;
-        const ws = new WebSocket(wsUrl);
-
-        ws.onopen = () => {
-            console.log('WebSocket connected');
-            ws.send(JSON.stringify({ type: 'identify', userName: userName }));
-        };
-
-        ws.onmessage = (event) => {
-            try {
-                const data = JSON.parse(event.data);
-                console.log('WebSocket message received:', data);
-
-                if (data.type === 'friend_referral_recieved') {
-                    alert(`You recieved a friend referral: ${data.friend.name}!`);
-                }
-            } catch (err) {
-                console.error('Error parsing WebSocket message:', err);
-            }
-        };
-
-        ws.onerror = (error) => console.error('WebSocket error:', error);
-        ws.onclose = () => console.log('WebSocket disconnected');
-
-        setSocket(ws);
-
-        return () => {
-            if (ws.readyState === WebSocket.OPEN) {
-                ws.close();
-            }
-        };
-    }, [authState, userName]);
 
 
     const handleEditToggle = () => setIsEditing((prev) => !prev);
@@ -268,21 +229,21 @@ export function Friend_info({ authState, userName }) {
         };
     };
 
-    const handleRefer = () => {
+    const handleRefer = (recipientEmail) => {
         if (!socket || socket.readyState !== WebSocket.OPEN) {
             alert('WebSocket not connected. Please refresh the page and try again.');
             return;
         }
 
-        const recipientUserName = prompt('Enter the username of the person you want to refer this friend to:');
-
-        if (!recipientUserName || recipientUserName.trim() === '') {
+        if (!recipientEmail || recipientEmail.trim() === '') {
             alert('Referral cancelled - no username provided.');
             return;
         }
 
         const referralData = {
             type: 'friend_referral',
+            toUser: recipientEmail.trim(),
+            fromUser: userName,
             friend: { 
                 name: friend.name,
                 contactInfo: friend.contactInfo,
@@ -294,7 +255,8 @@ export function Friend_info({ authState, userName }) {
         };
 
         socket.send(JSON.stringify(referralData));
-        alert(`Friend "${friend.name}" has been referred to ${recipientUserName}!`);
+        console.log('Sent referral via WebSocket:', referralData);
+        alert(`Friend "${friend.name}" has been referred to ${recipientEmail}!`);
     };
 
 
@@ -867,6 +829,8 @@ export function Friend_info({ authState, userName }) {
                                 handleRefer(referRecipient.trim());
                                 setShowReferModal(false);
                                 setReferRecipient('');
+                            } else {
+                                alert('Please enter a valid email for the recipient.');
                             }
                         }}>
                             Send Referral

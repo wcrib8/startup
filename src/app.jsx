@@ -20,6 +20,8 @@ export default function App() {
   const [authState, setAuthState] = React.useState(
     storedUser ? AuthState.Authenticated : AuthState.Unauthenticated
   );
+  const [socket, setSocket] = React.useState(null);
+  
 
   function handleLogout() {
     localStorage.removeItem('userName');
@@ -39,6 +41,44 @@ export default function App() {
       localStorage.setItem('userName', newUserName);
     }
   };
+
+  // WebSocket action
+  useEffect(() => {
+    if (authState !== AuthState.Authenticated || !userName) return;
+
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws`;
+    const ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      ws.send(JSON.stringify({ type: 'identify', userName: userName }));
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message received:', data);
+
+        if (data.type === 'friend_referral_recieved') {
+          alert(`You recieved a friend referral: ${data.friend.name}!`);
+        }
+      } catch (err) {
+        console.error('Error parsing WebSocket message:', err);
+      }
+    };
+
+    ws.onerror = (error) => console.error('WebSocket error:', error);
+    ws.onclose = () => console.log('WebSocket disconnected');
+
+    setSocket(ws);
+
+    return () => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
+  }, [authState, userName]);
 
 
   return (
@@ -73,7 +113,7 @@ export default function App() {
             path="/key_indicators"
             element={
               <ProtectedRoute authState={authState}>
-                <Key_indicators userName={userName} authState={authState} />
+                <Key_indicators userName={userName} authState={authState} socket={socket} />
               </ProtectedRoute>
             }
           />
@@ -81,7 +121,7 @@ export default function App() {
             path="/friends"
             element={
               <ProtectedRoute authState={authState}>
-                <Friends userName={userName} authState={authState} />
+                <Friends userName={userName} authState={authState} socket={socket} />
               </ProtectedRoute>
             }
           />
@@ -89,7 +129,7 @@ export default function App() {
             path="/friend_info/:id"
             element={
               <ProtectedRoute authState={authState}>
-                <Friend_info userName={userName} authState={authState} />
+                <Friend_info userName={userName} authState={authState} socket={socket} />
               </ProtectedRoute>
             }
           />
