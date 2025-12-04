@@ -2,11 +2,11 @@
 
 [My Notes](notes.md)
 
-A brief description of the application here. just a little about me, I am Wolf Cribbs. boutta make a difference in the world for sure, but for now here we are learning what in the world Github is. if you are reading this its probably because I am now world famous. Hopefully its not for anything weird.
+A brief description of the application here. just a little about me, I am Wolf Cribbs. I recently returned from a mission serving in Taiwan, and I was so grateful for that experience. Using the tools available to missionaries helped me so much, so when I got home I wished there was an opportunity to continue using them for my own life. I wanted to design PMGDating to allow other return missionaries like me to have this tool to help us in one aspect of our return to normal life.
 
 ## Elevator Pitch
 
-Are you a recently returned missionary? Are you wanting to get into the dating scene, but not exactly sure where to improve your game? Check out PMG Dating! This is the newest tool to help you track and improve your dating. Collaborate with friends to hype up their work, and share useful information! Nothing about dating is easy, but lets start making eternal progress today.
+Are you a recently returned missionary? Are you wanting to get into the dating scene, but not exactly sure where to improve your game? Check out PMGDating! This is the newest tool to help you track and improve your dating. Collaborate with friends to hype up their work, and share useful information! Nothing about dating is easy, but lets start making eternal progress today.
 
 ## Design
 
@@ -18,23 +18,22 @@ here is a design of how backend would connect user stats to friends and database
 ## Key Features
 
 1. secure login to a personal account
-2. ability for user to add targets and friends
-3. retain information on different targets
-4. different display pages
-5. stats of friends
-6. top date suggestions
-7. key indicators are automatically adjusted
+2. ability for user to add friends
+3. retain information on different special friend
+4. different display pages for key indicators and friends
+5. place to store important information to remember about your friends
+7. key indicators are automatically adjusted to your dating progress
 
 ## Technologies
 
 PMG Dating makes use of all the following technologies:
 
-- **HTML** :  Use of HTML for page structure, will implement 3 or more pages, one for login, one for key indicators, one for target tracking.
-- **CSS** :  Make a user attractive design, create icons for targets and key indicators.
+- **HTML** :  Use of HTML for page structure, will implement 3 or more pages, one for login, one for key indicators, one for friends and info.
+- **CSS** :  Make a user attractive design, create icons for friend and key indicators.
 - **React** :  provides different pages, login, toggle between indicators and tracking pages. Also helps with displaying proper icons and stats, displaying friends stats and suggestions.
-- **Service** :  Backend endpoints assist with storing info on target tracking, updating info and indicators, retrieving info and suggestions.
+- **Service** :  Backend endpoints assist with storing info on friends, updating info and indicators, retrieving info.
 - **DB/Login** :  Store users and their account in the database. require authentication to access info and interact with assets.
-- **WebSocket** :  Stats and suggestions are shared to friends.
+- **WebSocket** :  friends can be referred to other users!
 
 
 
@@ -107,8 +106,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [x] **Backend listens for WebSocket connection** - I added the peerProxy js file with backend webSocket calls
+- [x] **Frontend makes WebSocket connection** - app.jsx holds the functions to connect to websocket so friends can be recieved from any page
+- [x] **Data sent over WebSocket connection** - friends can be referred pressing the refer button!
+- [x] **WebSocket data displayed** - friends referred will appear on other users friend lists, confirmed messages also appear
+- [x] **Application is fully functional** - finallYYY!!!!!!

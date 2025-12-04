@@ -444,8 +444,8 @@ export function Friend_info({ authState, userName, socket }) {
     const commitmentOptions = [
         'stay in contact', 'regular kind communication', 'go on a date', 
         'meet friends', 'attend an activity together', 'daily call', 
-        'be present at something important', 
-        '(name) is present at something important to you', 
+        `be present at something important to ${friend.name}`, 
+        `${friend.name} is present at something important to you`, 
         'kiss', 'share vulnerable moment', 'be girlfriend or boyfriend', 'other'
     ];
 
@@ -534,18 +534,22 @@ export function Friend_info({ authState, userName, socket }) {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-muted small">No discussions yet</p>
+                                    <p className="text-gray small">No discussions yet</p>
                                 );
                             })()}
 
                             <div className="contact-entry mt-3">
                                 <label>Commitments:</label>
-                                {Object.entries(editData.progress.commitments).map(([key, value]) => (
-                                    <div key={key} className="d-flex align-items-center mb-1">
-                                        <span className="me-2" style={{ textTransform: 'capitalize' }}>{key}:</span>
-                                        <span>{value}</span>
-                                    </div>
-                                ))}
+                                {editData.progress?.commitments ? (
+                                    Object.entries(editData.progress.commitments).map(([key, value]) => (
+                                        <div key={key} className="d-flex align-items-center mb-1">
+                                            <span className="me-2" style={{ textTransform: 'capitalize' }}>{key}:</span>
+                                            <span>{value}</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-gray small">No commitments data</p>
+                                )}
                             </div>
 
                             {(() => {
@@ -558,7 +562,7 @@ export function Friend_info({ authState, userName, socket }) {
                                         ))}
                                     </ul>
                                 ) : (
-                                    <p className="text-muted small">No commitments yet</p>
+                                    <p className="text-gray small">No commitments yet</p>
                                 );
                             })()}
                         </div>

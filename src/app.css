@@ -242,20 +242,40 @@ footer a {
   float: right;
 }
 
-@media (max-width: 500px), (max-height: 600px) {
+@media (max-width: 500px) {
   header {
-    display: none;
+    padding: 0.5rem;
   }
-  footer {
-    display: none;
+  .pmg-title {
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+  }
+  .pmg-subtitle {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .nav {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
+  }
+  .nav-item {
+    width: 100%;
+    text-align: center;
+  }
+  .nav-link {
+    display: block;
+    padding: 0.5rem;
   }
   .site-footer {
-    display: none;
+    padding: 0.5rem;
+    font-size: 0.8rem;
   }
-  .site-header {
-    display: none;
+  .site-footer .container {
+    flex-direction: column;
+    gap: 0.25rem;
   }
   main {
-    flex: 1 100vh;
+    padding: 1rem 0.5rem;
   }
 }
