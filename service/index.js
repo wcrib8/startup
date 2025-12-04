@@ -188,6 +188,18 @@ apiRouter.post('/friends/:id', verifyAuth, async (req, res) => {
   res.send(data.friends[index]);
 });
 
+// delete a friend
+apiRouter.delete('/friends/:id', verifyAuth, async (req, res) => {
+  const data = await getUserData(req);
+  const index = data.friends.findIndex(f => f.id === req.params.id);
+  if (index === -1) {
+    return res.status(404).send({ msg: 'Friend not found' });
+  }
+  data.friends.splice(index, 1);
+  await saveUserData(req, data);
+  res.status(204).end();
+});
+
 // get last reset date
 apiRouter.get('/key_indicators/reset_date', verifyAuth, async (req, res) => {
   const data = await getUserData(req);

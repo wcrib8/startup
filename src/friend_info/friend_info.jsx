@@ -229,7 +229,7 @@ export function Friend_info({ authState, userName, socket }) {
         };
     };
 
-    const handleRefer = (recipientEmail) => {
+    const handleRefer = async (recipientEmail) => {
         if (!socket || socket.readyState !== WebSocket.OPEN) {
             alert('WebSocket not connected. Please refresh the page and try again.');
             return;
@@ -244,6 +244,7 @@ export function Friend_info({ authState, userName, socket }) {
             type: 'friend_referral',
             toUser: recipientEmail.trim(),
             fromUser: userName,
+            originalFriendId: friend.id,
             friend: { 
                 name: friend.name,
                 contactInfo: friend.contactInfo,
@@ -256,7 +257,25 @@ export function Friend_info({ authState, userName, socket }) {
 
         socket.send(JSON.stringify(referralData));
         console.log('Sent referral via WebSocket:', referralData);
-        alert(`Friend "${friend.name}" has been referred to ${recipientEmail}!`);
+
+        try {
+            const response = await fetch(`/api/friends/${friend.id}`, {
+                method: 'DELETE',
+                credentials: 'include'
+            });
+
+            if (response.ok) {
+                console.log('Friend deleted after referral');
+                alert(`Friend "${friend.name}" referred and deleted from your list.`);
+                navigate('/friends');
+            } else {
+                console.error('Failed to delete friend after referral');
+                alert('Failed to delete friend after referral.');
+            }
+        } catch (err) {
+            console.error('Error deleting friend:', err);
+            alert('Error deleting friend after referral.');
+        }
     };
 
 
