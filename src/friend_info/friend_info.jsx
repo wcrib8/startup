@@ -21,7 +21,9 @@ export function Friend_info({ authState, userName }) {
     const [otherCommitment, setOtherCommitment] = useState('');
     
     const [socket, setSocket] = React.useState(null);
-
+    const [showReferModal, setShowReferModal] = useState(false);
+    const [referRecipient, setReferRecipient] = useState('');
+    const [availableUsers, setAvailableUsers] = useState([]);
 
     const [friend, setFriend] = React.useState({
         hasCountedAsNewContact: false,
@@ -124,18 +126,42 @@ export function Friend_info({ authState, userName }) {
     }, [id, navigate, authState]);
 
     // WebSocket action
-    // React.useEffect(() => {
-    //     const ws = new WebSocket('ws://localhost:4000'); // will be my WS server!!!!!
+    useEffect(() => {
+        if (authState !== AuthState.Authenticated || !userName) return;
 
-    //     ws.onopen = () => console.log('WebSocket connected');
-    //     ws.onmessage = (event) => console.log('Received:', event.data);
-    //     ws.onerror = (error) => console.error('WebSocket error:', error);
-    //     ws.onclose = () => console.log('WebSocket closed');
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/ws`;
+        const ws = new WebSocket(wsUrl);
 
-    //     setSocket(ws);
+        ws.onopen = () => {
+            console.log('WebSocket connected');
+            ws.send(JSON.stringify({ type: 'identify', userName: userName }));
+        };
 
-    //     return () => ws.close(); 
-    // }, []); 
+        ws.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+                console.log('WebSocket message received:', data);
+
+                if (data.type === 'friend_referral_recieved') {
+                    alert(`You recieved a friend referral: ${data.friend.name}!`);
+                }
+            } catch (err) {
+                console.error('Error parsing WebSocket message:', err);
+            }
+        };
+
+        ws.onerror = (error) => console.error('WebSocket error:', error);
+        ws.onclose = () => console.log('WebSocket disconnected');
+
+        setSocket(ws);
+
+        return () => {
+            if (ws.readyState === WebSocket.OPEN) {
+                ws.close();
+            }
+        };
+    }, [authState, userName]);
 
 
     const handleEditToggle = () => setIsEditing((prev) => !prev);
@@ -243,17 +269,31 @@ export function Friend_info({ authState, userName }) {
 
     const handleRefer = () => {
         if (!socket || socket.readyState !== WebSocket.OPEN) {
-            alert('WebSocket not connected. Cannot send referral yet.');
+            alert('WebSocket not connected. Please refresh the page and try again.');
+            return;
+        }
+
+        const recipientUserName = prompt('Enter the username of the person you want to refer this friend to:');
+
+        if (!recipientUserName || recipientUserName.trim() === '') {
+            alert('Referral cancelled - no username provided.');
             return;
         }
 
         const referralData = {
             type: 'friend_referral',
-            friend: { ...friend } 
+            friend: { 
+                name: friend.name,
+                contactInfo: friend.contactInfo,
+                availability: friend.availability,
+                interests: friend.interests,
+                timeline: friend.timeline || [],
+                progress: friend.progress || { discussions: 0, commitments: { notExtended: 0, extended: 0, keeping: 0, notKept: 0 } }
+            } 
         };
 
         socket.send(JSON.stringify(referralData));
-        alert(`Friend "${friend.name}" has been referred!`);
+        alert(`Friend "${friend.name}" has been referred to ${recipientUserName}!`);
     };
 
 
@@ -706,7 +746,7 @@ export function Friend_info({ authState, userName }) {
                         <button className="btn btn-danger" onClick={() => setShowAddEvent(true)}>
                             + Add Event
                         </button>
-                        <button className="btn btn-danger" onClick={handleRefer}>
+                        <button className="btn btn-danger" onClick={() => setShowReferModal(true)}>
                             Refer
                         </button>
                     </div>
@@ -806,6 +846,36 @@ export function Friend_info({ authState, userName }) {
                     <div>
                         <button className="btn btn-danger" onClick={handleAddEvent}>Add Event</button>
                         <button className="add-btn" onClick={() => setShowAddEvent(false)}>Cancel</button>
+                    </div>
+                </div>
+            )}
+
+            {showReferModal && (
+                <div className="add-event-modal">
+                    <h5>Refer Friend</h5>
+                    <input 
+                        type="text"
+                        className="form-control"
+                        placeholder="Enter recipient username"
+                        value={referRecipient}
+                        onChange={e => setReferRecipient(e.target.value)}
+                    />
+                    <div>
+                        <button className="btn btn-danger" onClick={() => {
+                            if (referRecipient.trim()) {
+                                handleRefer(referRecipient.trim());
+                                setShowReferModal(false);
+                                setReferRecipient('');
+                            }
+                        }}>
+                            Send Referral
+                        </button>
+                        <button className="add-btn" onClick={() => {
+                            setShowReferModal(false);
+                            setReferRecipient('');
+                        }}>
+                            Cancel
+                        </button>
                     </div>
                 </div>
             )}
