@@ -1,4 +1,5 @@
 import React from 'react';
+import { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './app.css';
 import { BrowserRouter, NavLink, Route, Routes, useLocation, Navigate } from 'react-router-dom';
@@ -42,6 +43,32 @@ export default function App() {
     }
   };
 
+  const saveFriendFromReferral = async (friend) => {
+    try {
+      // Remove the old ID and create as new friend
+      const newFriend = {
+        ...friend,
+        id: undefined  // Let backend generate new ID
+      };
+        
+      const response = await fetch('/api/friends', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(newFriend)
+      });
+        
+      if (response.ok) {
+        console.log('✅ Friend saved from referral');
+        window.dispatchEvent(new Event('friendsListUpdated'));
+      } else {
+        console.error('Failed to save referred friend');
+      }
+    } catch (err) {
+      console.error('Error saving referred friend:', err);
+    }
+  };
+
   // WebSocket action
   useEffect(() => {
     if (authState !== AuthState.Authenticated || !userName) return;
@@ -61,7 +88,13 @@ export default function App() {
         console.log('WebSocket message received:', data);
 
         if (data.type === 'friend_referral_recieved') {
+          saveFriendFromReferral(data.friend);
           alert(`You recieved a friend referral: ${data.friend.name}!`);
+        }
+
+        if (data.type === 'referral_error') {
+          console.log('Referral error:', data.message);
+          alert(data.message);
         }
       } catch (err) {
         console.error('Error parsing WebSocket message:', err);

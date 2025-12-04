@@ -40,12 +40,14 @@ function peerProxy(httpServer) {
                             type: 'friend_referral_recieved',
                             fromUser: data.fromUser,
                             friend: data.friend,
+                            originalFriendId: data.originalFriendId,
                         }));
 
                         socket.send(JSON.stringify({
                             type: 'referral_success',
                             message: `Referral sent to ${data.toUser}`,
                             toUser: data.toUser,
+                            friendId: data.originalFriendId,
                         }));
 
                         console.log(`Referral sent to ${data.toUser}`);
