@@ -1,7 +1,7 @@
-const { webSocketServer } = require('ws');
+const { WebSocketServer } = require('ws');
 
 function peerProxy(httpServer) {
-    const socketServer = new webSocketServer({ noServer: true });
+    const socketServer = new WebSocketServer({ noServer: true });
 
     const clients = new Map();
 

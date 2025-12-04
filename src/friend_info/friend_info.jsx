@@ -6,6 +6,7 @@ import { AuthState } from '../login/auth_state';
 
 export function Friend_info({ authState, userName }) {
     console.log('authState in FriendInfo:', authState);
+    console.log('userName in FriendInfo:', userName);
 
     const { id } = useParams();
     const navigate = useNavigate();
@@ -855,8 +856,8 @@ export function Friend_info({ authState, userName }) {
                     <h5>Refer Friend</h5>
                     <input 
                         type="text"
-                        className="form-control"
-                        placeholder="Enter recipient username"
+                        className="form-control bright-placeholder"
+                        placeholder="Enter recipient's email"
                         value={referRecipient}
                         onChange={e => setReferRecipient(e.target.value)}
                     />
