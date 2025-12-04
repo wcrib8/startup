@@ -10,7 +10,6 @@ import { About } from './about/about';
 import { Friends } from './friends/friends';
 import { Key_indicators } from './key_indicators/key_indicators';
 import { Friend_info } from './friend_info/friend_info';
-import { Submit_contact } from './submit_contact/submit_contact';
 import { AuthState } from './login/auth_state';
 
 import { ProtectedRoute } from './protected_route';
@@ -87,9 +86,9 @@ export default function App() {
         const data = JSON.parse(event.data);
         console.log('WebSocket message received:', data);
 
-        if (data.type === 'friend_referral_recieved') {
+        if (data.type === 'friend_referral_received') {
           saveFriendFromReferral(data.friend);
-          alert(`You recieved a friend referral: ${data.friend.name}!`);
+          alert(`You recieved a friend referral from ${data.fromUser}: ${data.friend.name}!`);
         }
 
         if (data.type === 'referral_error') {
@@ -169,7 +168,6 @@ export default function App() {
 
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/submit_contact" element={<Submit_contact />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
 
@@ -195,7 +193,6 @@ function Header({ authState, onLogout }) {
   const isSignUpPage = location.pathname === '/signup';
   const isAboutPage = location.pathname === '/about';
   const isContactPage = location.pathname === '/contact';
-  const isSubmitContactPage = location.pathname === '/submit_contact';
   const isKeyIndicatorsPage = location.pathname === '/key_indicators';
   const isFriendsPage = location.pathname === '/friends';
   const isFriendInfoPage = location.pathname.startsWith('/friend_info');
@@ -222,7 +219,7 @@ function Header({ authState, onLogout }) {
               </>
             )}
 
-            {(isAboutPage || isContactPage || isSubmitContactPage) && (
+            {(isAboutPage || isContactPage) && (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link text-light" to="/">
