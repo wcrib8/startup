@@ -5,12 +5,8 @@ import { AuthState } from '../login/auth_state';
 
 
 export function Friend_info({ authState, userName, socket }) {
-    console.log('authState in FriendInfo:', authState);
-    console.log('userName in FriendInfo:', userName);
-
     const { id } = useParams();
     const navigate = useNavigate();
-
     const [showAddEvent, setShowAddEvent] = useState(false);
     const [eventType, setEventType] = useState('contact');
     const [contactMethod, setContactMethod] = useState('inPerson');
@@ -19,18 +15,16 @@ export function Friend_info({ authState, userName, socket }) {
     const [vulnerableText, setVulnerableText] = useState('');
     const [eventDate, setEventDate] = useState(new Date().toISOString().slice(0,16));
     const [otherDiscussion, setOtherDiscussion] = useState('');
-    const [otherCommitment, setOtherCommitment] = useState('');
-    
+    const [otherCommitment, setOtherCommitment] = useState('');   
     const [showReferModal, setShowReferModal] = useState(false);
     const [referRecipient, setReferRecipient] = useState('');
-    const [availableUsers, setAvailableUsers] = useState([]);
 
-    const [friend, setFriend] = React.useState({
+    const [friend, setFriend] = useState({
         hasCountedAsNewContact: false,
         hasCountedAsNewPartner: false
     });
-    const [isEditing, setIsEditing] = React.useState(false);
-    const [editData, setEditData] = React.useState({
+    const [isEditing, setIsEditing] = useState(false);
+    const [editData, setEditData] = useState({
         name: '',
         contactInfo: [],
         availability: [],
@@ -100,7 +94,6 @@ export function Friend_info({ authState, userName, socket }) {
                 return;
             }
 
-            // const selectedFriend = data[friendIndex];
             setFriend(data);
             setEditData({
                 name: data.name || '',
@@ -123,7 +116,7 @@ export function Friend_info({ authState, userName, socket }) {
         }
 
         loadFriend();
-    }, [id, navigate, authState]);
+    }, [id, authState]);
 
 
     const handleEditToggle = () => setIsEditing((prev) => !prev);
@@ -177,17 +170,7 @@ export function Friend_info({ authState, userName, socket }) {
         setEditData(prev => ({ ...prev, contactInfo: updatedContacts }));
     };
 
-    function handleAddContact(newContact) {
-        setFriend(prev => {
-            const updatedContacts = [...prev.contactInfo, newContact];
-            const updatedFriend = { ...prev, contactInfo: updatedContacts };
-
-            return updatedFriend;
-        });
-    }
-
-
-    const addContact = (newContact) => {
+    const addContact = () => {
         setEditData(prev => ({
             ...prev,
             contactInfo: [...prev.contactInfo, { type: 'mobile', value: '' }]
@@ -422,7 +405,6 @@ export function Friend_info({ authState, userName, socket }) {
         window.dispatchEvent(new Event('keyIndicatorsUpdated'));
 
         setShowAddEvent(false);
-        setEventType('');
         setContactMethod('');
         setSelectedDiscussions([]);
         setSelectedCommitments([]);
@@ -431,8 +413,6 @@ export function Friend_info({ authState, userName, socket }) {
         setOtherCommitment('');
         setEventDate(new Date().toISOString().slice(0, 16));
     };
-
-
 
 
     const discussionOptions = [
@@ -444,22 +424,10 @@ export function Friend_info({ authState, userName, socket }) {
     const commitmentOptions = [
         'stay in contact', 'regular kind communication', 'go on a date', 
         'meet friends', 'attend an activity together', 'daily call', 
-        `be present at something important to ${friend.name}`, 
-        `${friend.name} is present at something important to you`, 
+        `be present at something important to ${friend.name || 'them'}`, 
+        `${friend.name || 'They'} will be present at something important to you`, 
         'kiss', 'share vulnerable moment', 'be girlfriend or boyfriend', 'other'
     ];
-
-
-    const totalDiscussionsDone = editData.timeline.reduce((sum, event) => sum + (event.discussions?.length || 0), 0);
-    const totalPossibleDiscussions = editData.timeline.reduce((sum, event) => sum + (discussionOptions?.length || 0), 0);
-    const totalCommitmentsDone = editData.timeline.reduce((sum, event) => sum + (event.commitments?.length || 0), 0);
-    const totalPossibleCommitments = editData.timeline.reduce((sum, event) => sum + (commitmentOptions?.length || 0), 0);
-
-    const progressPercent = Math.floor(
-        (totalDiscussionsDone + totalCommitmentsDone) / 
-        (totalPossibleDiscussions + totalPossibleCommitments) * 100
-    );
-
 
 
     return (

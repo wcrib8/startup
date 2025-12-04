@@ -31,7 +31,6 @@ async function addUser(user) {
 }
 
 async function updateUser(user) {
-//   await userCollection.updateOne({ email: user.email }, { $set: user });
 const { _id, ...updateFields } = user; // Remove _id if present
   await userCollection.updateOne(
     { email: user.email }, 

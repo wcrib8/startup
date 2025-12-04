@@ -422,6 +422,10 @@ Service is tough, but it allows for user data to be saved in the backend, not ju
 
 Next step to service, using a database allows for user data to persist, and for data to be shared globally. also makes it easier for users to continue to use and update service. Changes needed to be made to save data with respect to the database instead of locally and backend.
 
+### WebSocket
+
+Websockets allow for connection to other users. I made it so websocket connection is activated in app, so all pages can receive referrals. This is super useful to allow communication between users.
+
 
 
 ## Midterm Notes
