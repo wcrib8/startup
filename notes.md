@@ -774,6 +774,302 @@ colors.addEventListener('change', () =>{
 
 
 
+## Final Notes
+
+1. default port for http/https/ssh - http: port 80, https: port 443, ssh: port 22
+2. what does an httpstatus code in the range of 300/400/500 indicate?
+  - 300-399 (3xx - Redirection): The requested resource has been moved or the client needs to take additional action to complete the request. Common examples           include 301 (Moved Permanently), 302 (Found/Temporary Redirect), and 304 (Not Modified).
+  - 400-499 (4xx - Client Errors): There's an error with the client's request. The client did something wrong, like requesting a page that doesn't exist or             lacking proper authentication. Common examples include 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), and 404 (Not Found).
+  - 500-599 (5xx - Server Errors): The server encountered an error and couldn't fulfill a valid request. Something went wrong on the server side. Common examples       include 500 (Internal Server Error), 502 (Bad Gateway), and 503 (Service Unavailable).
+
+3. http header content type:
+  a) specifies media type, allowing you to **indicate format** of (html, json, images, etc), enable proper **parsing**, and **specify character encoding**               (charset info)
+  b) Common examples:
+        text/html - HTML documents
+        application/json - JSON data
+        application/xml - XML data
+        text/plain - Plain text
+        image/jpeg - JPEG images
+        multipart/form-data - Form submissions with file uploads
+        application/x-www-form-urlencoded - Standard form submissions
+
+4.   Secure Cookie: A cookie with the Secure attribute is only sent to the server with an encrypted request over the HTTPS protocol, never with unsecured HTTP                         mozilla (except on localhost). This helps protect against man-in-the-middle attacks by ensuring the cookie can't be intercepted over                               unencrypted connections.
+                    example: `Set-Cookie: id=a3fWa; Secure`
+    HttpOnly Cookie: A cookie with the HttpOnly attribute can't be accessed by JavaScript mozilla, for example using Document.cookie. It can only be accessed when                       it reaches the server. This is particularly important for session cookies, as it helps mitigate cross-site scripting (XSS) attacks mozilla.
+                    example: `Set-Cookie: id=a3fWa; HttpOnly`
+    SameSite Cookie: The SameSite attribute lets servers specify whether/when cookies are sent with cross-site requests mozilla, helping prevent information                             leakage and providing protection against cross-site request forgery (CSRF) attacks. It has three possible values:
+                      Strict: The browser only sends the cookie with requests originating from the cookie's origin site (useful for authentication)
+                      Lax: Similar to Strict, but the browser also sends the cookie when the user navigates to the cookie's origin site from a different site
+                      None: Cookies are sent on both originating and cross-site requests (requires Secure attribute)
+                       example: ``` Set-Cookie: cart=110045; SameSite=Strict
+                                    Set-Cookie: affiliate=e4rt45dw; SameSite=Lax
+                                    Set-Cookie: widget_session=7yjgj57e4n3d; SameSite=None; Secure  ```
+
+5. example of express middleware console.log output for GET request with url path of /api/document:
+```
+const express = require('express');
+const app = express();
+
+// Middleware 1: Logs all requests
+app.use((req, res, next) => {
+  console.log('Method:', req.method);
+  console.log('Path:', req.path);
+  next();
+});
+
+// Middleware 2: Specific to /api routes
+app.use('/api', (req, res, next) => {
+  console.log('API route accessed');
+  next();
+});
+
+// Middleware 3: Route handler
+app.get('/api/document', (req, res) => {
+  console.log('Document route handler');
+  res.send('Document data');
+});
+
+app.listen(3000);
+``
+
+**For a GET request to `/api/document`, the console output would be:**
+``
+Method: GET
+Path: /api/document
+API route accessed
+Document route handler
+```
+
+  middleware path: Client Request → Middleware 1 → Middleware 2 → Middleware 3 → Route Handler → Response to Client
+
+6. express servic code fetch return:
+```
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+// Endpoint 1: Get user data
+app.get('/api/user/:id', (req, res) => {
+  const userId = req.params.id;
+  res.json({
+    id: userId,
+    name: 'John Doe',
+    email: 'john@example.com'
+  });
+});
+
+// Endpoint 2: Create a new post
+app.post('/api/posts', (req, res) => {
+  const { title, content } = req.body;
+  res.status(201).json({
+    success: true,
+    post: {
+      id: 123,
+      title: title,
+      content: content,
+      createdAt: new Date()
+    }
+  });
+});
+
+// Endpoint 3: Delete a comment
+app.delete('/api/comments/:id', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Comment deleted'
+  });
+});
+
+app.listen(3000);
+```
+```
+fetch('http://localhost:3000/api/user/42')
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+returns:
+```
+{
+  id: '42',
+  name: 'John Doe',
+  email: 'john@example.com'
+}
+```
+```
+fetch('http://localhost:3000/api/posts', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    title: 'My First Post',
+    content: 'This is the content'
+  })
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+returns:
+```
+{
+  success: true,
+  post: {
+    id: 123,
+    title: 'My First Post',
+    content: 'This is the content',
+    createdAt: '2024-12-11T10:30:00.000Z' // Current timestamp
+  }
+}
+```
+```
+fetch('http://localhost:3000/api/comments/99', {
+  method: 'DELETE'
+})
+  .then(response => response.json())
+  .then(data => console.log(data));
+```
+returns:
+```
+{
+  success: true,
+  message: 'Comment deleted'
+}
+```
+
+7. given a list of users or ids, a query can be used to request a specific data type. findOne will return the first. find or collection.find will return all.
+8. how should user passwords be stored? - NEVER store as plain text, always hash before storing in a database. common way is using bcrypt.
+          - encryption is two-way (can be decrypted), DON'T USE ENCRYPTION
+          - Hashing is one-way (cannot be reversed) , use this
+9. websocket code example:
+```
+const WebSocket = require('ws');
+const wss = new WebSocket.Server({ port: 9900 });
+
+wss.on('connection', (ws) => {
+  console.log('Client connected');
+  
+  // Send a welcome message when client connects
+  ws.send('Welcome to the server!');
+  
+  // Listen for messages from the client
+  ws.on('message', (message) => {
+    console.log('Received from client:', message);
+    
+    // Echo the message back with a prefix
+    ws.send(`Server received: ${message}`);
+  });
+  
+  // Send a message after 2 seconds
+  setTimeout(() => {
+    ws.send('Hello from server after 2 seconds');
+  }, 2000);
+});
+
+console.log('WebSocket server running on port 9900');
+```
+```
+const socket = new WebSocket('ws://localhost:9900');
+
+socket.onopen = () => {
+  console.log('Connected to server');
+  socket.send('Hello from client!');
+};
+
+socket.onmessage = (event) => {
+  console.log('Message from server:', event.data);
+};
+
+socket.onclose = () => {
+  console.log('Disconnected from server');
+};
+
+socket.onerror = (error) => {
+  console.log('WebSocket error:', error);
+};
+```
+---
+
+## **What Will the Frontend Log to the Console?**
+```
+Connected to server
+Message from server: Welcome to the server!
+Message from server: Server received: Hello from client!
+Message from server: Hello from server after 2 seconds
+```
+
+---
+
+## **Explanation of the Flow:**
+
+1. **Connection established**
+   - Frontend: `socket.onopen` fires → logs "Connected to server"
+   - Frontend: Sends "Hello from client!" to server
+
+2. **Server sends welcome message**
+   - Backend: Sends "Welcome to the server!"
+   - Frontend: `socket.onmessage` fires → logs "Message from server: Welcome to the server!"
+
+3. **Server receives and echoes client message**
+   - Backend: Receives "Hello from client!" and sends back "Server received: Hello from client!"
+   - Frontend: `socket.onmessage` fires → logs "Message from server: Server received: Hello from client!"
+
+4. **Server sends delayed message**
+   - Backend: After 2 seconds, sends "Hello from server after 2 seconds"
+   - Frontend: `socket.onmessage` fires → logs "Message from server: Hello from server after 2 seconds"
+
+---
+
+## **What the Backend Logs to the Console:**
+```
+WebSocket server running on port 9900
+Client connected
+Received from client: Hello from client!
+```
+
+10. what is websocket protocol intended to provide? 
+    Key Features WebSocket Provides:
+    1. Full-Duplex Communication
+    
+    Both client and server can send messages simultaneously and independently
+    No need to wait for a request before sending a response
+    True two-way communication channel
+    
+    2. Real-Time Data Transfer
+    
+    Low latency message delivery
+    Instant updates without polling
+    Perfect for applications that need immediate data sync
+    
+    3. Persistent Connection
+    
+    Connection stays open after the initial handshake
+    No need to repeatedly establish new connections
+    Reduces overhead compared to HTTP requests
+    
+    4. Efficient Communication
+    
+    Minimal overhead per message (just a few bytes)
+    No HTTP headers sent with each message after initial handshake
+    Less bandwidth usage compared to HTTP polling
+
+    Two-way: Either side can send anytime
+    Efficient: Minimal frame overhead
+    Real-time: Instant message delivery
+
+11. what do the acronyms stand for?
+      a) JSX = JavaScript XML  (React, html like code within JS)
+      b) JS = JavaScript (Node.js, for web development)
+      c) AWS = Amazon Web Services (cloud computing platform)
+      d) NPM = Node Package Manager (Node.js, JavaScript, package manager for JavaScript)
+      e) NVM = Node Version Manager (manage Node.js versions)
+
+12. 
+
+
+
+
+
 
 
 ## Class Notes
