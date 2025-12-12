@@ -1064,7 +1064,233 @@ Received from client: Hello from client!
       d) NPM = Node Package Manager (Node.js, JavaScript, package manager for JavaScript)
       e) NVM = Node Version Manager (manage Node.js versions)
 
-12. 
+12. Html document with react component
+```
+function UserProfile(props) {
+  return (
+    <div>
+      <h1>Welcome, {props.name}!</h1>
+      <p>Age: {props.age}</p>
+      <p>Status: {props.isActive ? 'Active' : 'Inactive'}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <UserProfile name="Sarah" age={28} isActive={true} />
+      <UserProfile name="John" age={35} isActive={false} />
+    </div>
+  );
+}
+
+// Render to the page
+ReactDOM.render(<App />, document.body);
+```
+
+---
+
+## **What Text Content Will Be Generated?**
+```
+Welcome, Sarah!
+Age: 28
+Status: Active
+
+Welcome, John!
+Age: 35
+Status: Inactive
+```
+
+13. given react components, what will be generated?
+```
+function Header(props) {
+  return <h1>{props.title}</h1>;
+}
+
+function UserInfo(props) {
+  return (
+    <div>
+      <p>Name: {props.name}</p>
+      <p>Email: {props.email}</p>
+    </div>
+  );
+}
+
+function Card(props) {
+  return (
+    <div className="card">
+      <Header title={props.heading} />
+      <UserInfo name={props.userName} email={props.userEmail} />
+      <p>Member since: {props.year}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Header title="User Dashboard" />
+      <Card 
+        heading="Profile" 
+        userName="Alice Johnson" 
+        userEmail="alice@example.com" 
+        year="2020" 
+      />
+      <Card 
+        heading="Settings" 
+        userName="Bob Smith" 
+        userEmail="bob@example.com" 
+        year="2021" 
+      />
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.body);
+```
+
+---
+
+## **What Text Content Will Be Generated?**
+```
+User Dashboard
+
+Profile
+Name: Alice Johnson
+Email: alice@example.com
+Member since: 2020
+
+Settings
+Name: Bob Smith
+Email: bob@example.com
+Member since: 2021
+```
+
+14. what does react component with useState do?
+    `React.useState` is a React Hook that allows you to add state to functional components. State is data that can change over time, and when it changes, React         automatically re-renders the component to reflect the new data.
+      you can add changable data, store persisting values, trigger re-renders, create interactive user interfaces.
+      with useState, components are dynamic and interactive
+
+15. React hooks - allow us to use state and other React features. includes useState, useEffect, useContext, etc.
+16. a) State Hooks: State lets a component "remember" information like user input
+        ```
+        function ImageGallery() {
+          const [index, setIndex] = useState(0);
+          // Component remembers which image is selected
+        }
+        ```
+    b) Context Hooks: Context lets a component receive information from distant parents without passing it as props react. For example, your app's top-level             component can pass the current UI theme to all components below, no matter how deep.
+        ```
+        function Button() {
+          const theme = useContext(ThemeContext);
+          // Can access theme without prop drilling
+        }
+        ```
+    c) Ref Hooks: Refs let a component hold some information that isn't used for rendering, like a DOM node or a timeout ID. Unlike with state, updating a ref           does not re-render your component react. Refs are an "escape hatch" from the React paradigm, useful when you need to work with non-React systems, such as         the built-in browser APIs.
+        ```
+        function Form() {
+          const inputRef = useRef(null);
+          // Can directly access the input DOM element
+        }
+        ```
+    d) Effect Hooks: Effects let a component connect to and synchronize with external systems. This includes dealing with network, browser DOM, animations,               widgets written using a different UI library, and other non-React code
+        ```
+        function ChatRoom({ roomId }) {
+          useEffect(() => {
+            const connection = createConnection(roomId);
+            connection.connect();
+            return () => connection.disconnect();
+          }, [roomId]);
+          // Connects to external chat system
+        }
+        ```
+    e) Performance Hooks: A common way to optimize re-rendering performance is to skip unnecessary work. For example, you can tell React to reuse a cached               calculation or to skip a re-render if the data has not changed since the previous render
+        ```
+        function TodoList({ todos, tab, theme }) {
+          const visibleTodos = useMemo(() => filterTodos(todos, tab), [todos, tab]);
+          // Caches the filtered result
+        }
+        ```
+
+17. React routes, uses client side navigation to avoid full page reloads. Routers help with navigation.
+18. The package.json file is the manifest/configuration file for Node.js projects. It contains metadata about your project and manages your project's                 dependencies, scripts, and configuration.
+    - project metadata - stores basic info about project
+    - dependency management - lists packages/libraries project needs
+    - scripts - defines commands that can be run with `npm run`
+    - entry point - specifies main file of application
+    when you run `npm install` npm reads package.json and installs all listed dependencies into the node_modules folder.
+
+    also creates `package-lock.json` which locks exact versions of dependencies, ensures consistent installs, committed to version control
+    package.json helps with reproducing builds, collaboration, automation, documentation, and publishing
+
+    package.json is the configuration file that defines your Node.js project, manages its dependencies, and provides scripts for common tasks.
+
+19. The fetch() function is a built-in JavaScript API used to make HTTP requests to servers. It allows you to retrieve (or send) data from/to a URL, such as           fetching data from an API, submitting forms, or uploading files.
+      ```
+      fetch('https://api.example.com/users')
+        .then(response => response.json())  // Parse JSON from response
+        .then(data => {
+          console.log(data);  // Use the data
+        })
+        .catch(error => {
+          console.error('Error fetching data:', error);
+        });
+      ```
+      - Make HTTP requests to APIs
+      - Retrieve data from servers (GET)
+      - Send data to servers (POST, PUT, DELETE)
+      - Handle responses asynchronously with Promises
+      - Work with JSON, text, blobs, and other data formats
+   
+20. Node.js is a JavaScript runtime environment that allows you to run JavaScript code outside of a web browser, primarily on servers. It enables developers to       use JavaScript for backend/server-side programming, not just frontend web pages.
+    key concept - javascript everywhere. same language for frontend and backend.
+    Node.js does:
+      1. runs javascript on the server
+      2. handles file system operations - read and write files
+      3. build APIs that handle HTTP requests
+      4. connects to databases
+      5. handles real time communication - websockets
+      6. runs build tools and scripts
+
+     handles asynchronous operations
+
+
+21. PM2 (Process Manager 2) is a production process manager for Node.js applications. It keeps your Node.js applications running continuously, restarts them if       they crash, and provides monitoring and management tools.
+
+    PM2 ensures your Node.js application stays alive in production by:
+
+    Automatically restarting crashed applications
+    Running applications in the background (as a daemon)
+    Managing multiple applications
+    Load balancing across CPU cores
+    Monitoring performance and logs
+
+    instead of running `node app.js`, use PM2: `pm2 start app.js`
+    What happens:
+      App runs in the background
+      You can close the terminal and the app keeps running
+      PM2 assigns it an ID and name
+
+    PM2 is used to:
+      ✅ Keep Node.js apps running 24/7
+      ✅ Automatically restart crashed applications
+      ✅ Run apps in the background (daemon mode)
+      ✅ Load balance across multiple CPU cores
+      ✅ Monitor performance (CPU, memory, logs)
+      ✅ Manage multiple applications
+      ✅ Auto-start applications on server reboot
+      ✅ Zero-downtime deployments
+
+22. What Vite Does
+    1. Lightning-Fast Development Server
+    2. Instant Hot Module Replacement (HMR) - When you save a file, changes appear in the browser instantly without full page reload:
+    3. Builds Optimized Production Bundles `npm run build`
+   
+     Vite is a next-generation frontend build tool that provides an extremely fast development experience with instant server startup and hot module replacement,       while creating optimized production builds.
+    
+    
+    
 
 
 
