@@ -1027,6 +1027,7 @@ Client connected
 Received from client: Hello from client!
 ```
 
+
 10. what is websocket protocol intended to provide? 
     Key Features WebSocket Provides:
     1. Full-Duplex Communication
