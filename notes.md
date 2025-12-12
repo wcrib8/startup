@@ -781,7 +781,6 @@ colors.addEventListener('change', () =>{
   - 300-399 (3xx - Redirection): The requested resource has been moved or the client needs to take additional action to complete the request. Common examples           include 301 (Moved Permanently), 302 (Found/Temporary Redirect), and 304 (Not Modified).
   - 400-499 (4xx - Client Errors): There's an error with the client's request. The client did something wrong, like requesting a page that doesn't exist or             lacking proper authentication. Common examples include 400 (Bad Request), 401 (Unauthorized), 403 (Forbidden), and 404 (Not Found).
   - 500-599 (5xx - Server Errors): The server encountered an error and couldn't fulfill a valid request. Something went wrong on the server side. Common examples       include 500 (Internal Server Error), 502 (Bad Gateway), and 503 (Service Unavailable).
-
 3. http header content type:
   a) specifies media type, allowing you to **indicate format** of (html, json, images, etc), enable proper **parsing**, and **specify character encoding**               (charset info)
   b) Common examples:
@@ -792,7 +791,6 @@ colors.addEventListener('change', () =>{
         image/jpeg - JPEG images
         multipart/form-data - Form submissions with file uploads
         application/x-www-form-urlencoded - Standard form submissions
-
 4.   Secure Cookie: A cookie with the Secure attribute is only sent to the server with an encrypted request over the HTTPS protocol, never with unsecured HTTP                         mozilla (except on localhost). This helps protect against man-in-the-middle attacks by ensuring the cookie can't be intercepted over                               unencrypted connections.
                     example: `Set-Cookie: id=a3fWa; Secure`
     HttpOnly Cookie: A cookie with the HttpOnly attribute can't be accessed by JavaScript mozilla, for example using Document.cookie. It can only be accessed when                       it reaches the server. This is particularly important for session cookies, as it helps mitigate cross-site scripting (XSS) attacks mozilla.
@@ -803,7 +801,7 @@ colors.addEventListener('change', () =>{
                       None: Cookies are sent on both originating and cross-site requests (requires Secure attribute)
                        example: ``` Set-Cookie: cart=110045; SameSite=Strict
                                     Set-Cookie: affiliate=e4rt45dw; SameSite=Lax
-                                    Set-Cookie: widget_session=7yjgj57e4n3d; SameSite=None; Secure  ```
+                                    Set-Cookie: widget_session=7yjgj57e4n3d; SameSite=None; Secure```
 
 5. example of express middleware console.log output for GET request with url path of /api/document:
 ```
@@ -941,6 +939,7 @@ returns:
 8. how should user passwords be stored? - NEVER store as plain text, always hash before storing in a database. common way is using bcrypt.
           - encryption is two-way (can be decrypted), DON'T USE ENCRYPTION
           - Hashing is one-way (cannot be reversed) , use this
+
 9. websocket code example:
 ```
 const WebSocket = require('ws');
@@ -1002,19 +1001,19 @@ Message from server: Hello from server after 2 seconds
 
 **Explanation of the Flow:**
 
-1. **Connection established**
+  1. **Connection established**
    - Frontend: `socket.onopen` fires → logs "Connected to server"
    - Frontend: Sends "Hello from client!" to server
 
-2. **Server sends welcome message**
+  2. **Server sends welcome message**
    - Backend: Sends "Welcome to the server!"
    - Frontend: `socket.onmessage` fires → logs "Message from server: Welcome to the server!"
 
-3. **Server receives and echoes client message**
+  3. **Server receives and echoes client message**
    - Backend: Receives "Hello from client!" and sends back "Server received: Hello from client!"
    - Frontend: `socket.onmessage` fires → logs "Message from server: Server received: Hello from client!"
 
-4. **Server sends delayed message**
+  4. **Server sends delayed message**
    - Backend: After 2 seconds, sends "Hello from server after 2 seconds"
    - Frontend: `socket.onmessage` fires → logs "Message from server: Hello from server after 2 seconds"
 
