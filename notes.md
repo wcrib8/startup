@@ -793,8 +793,8 @@ colors.addEventListener('change', () =>{
         application/x-www-form-urlencoded - Standard form submissions
 4.   Secure Cookie: A cookie with the Secure attribute is only sent to the server with an encrypted request over the HTTPS protocol, never with unsecured HTTP                         mozilla (except on localhost). This helps protect against man-in-the-middle attacks by ensuring the cookie can't be intercepted over                               unencrypted connections.
                     example: `Set-Cookie: id=a3fWa; Secure`
-    HttpOnly Cookie: A cookie with the HttpOnly attribute can't be accessed by JavaScript mozilla, for example using Document.cookie. It can only be accessed when                       it reaches the server. This is particularly important for session cookies, as it helps mitigate cross-site scripting (XSS) attacks mozilla.
-                    example: `Set-Cookie: id=a3fWa; HttpOnly`
+    HttpOnly Cookie: A cookie with the HttpOnly attribute can't be accessed by JavaScript mozilla, for example using Document.cookie. It can only be accessed when it reaches the server. This is particularly important for session cookies, as it helps mitigate cross-site scripting (XSS) attacks mozilla.
+                    example: `Set-Cookie: id=a3fWa; HttpOnly` prevents reading and writing
     SameSite Cookie: The SameSite attribute lets servers specify whether/when cookies are sent with cross-site requests mozilla, helping prevent information                             leakage and providing protection against cross-site request forgery (CSRF) attacks. It has three possible values:
                       Strict: The browser only sends the cookie with requests originating from the cookie's origin site (useful for authentication)
                       Lax: Similar to Strict, but the browser also sends the cookie when the user navigates to the cookie's origin site from a different site
@@ -1173,8 +1173,10 @@ Member since: 2021
       you can add changable data, store persisting values, trigger re-renders, create interactive user interfaces.
       with useState, components are dynamic and interactive
 
-15. React hooks - allow us to use state and other React features. includes useState, useEffect, useContext, etc.
-16. a) State Hooks: State lets a component "remember" information like user input
+    header with authentication for http request is credentials of user authentication
+
+16. React hooks - allow us to use state and other React features. includes useState, useEffect, useContext, etc.
+17. a) State Hooks: State lets a component "remember" information like user input
         ```
         function ImageGallery() {
           const [index, setIndex] = useState(0);
@@ -1261,7 +1263,7 @@ Member since: 2021
      handles asynchronous operations
 
 
-22. PM2 (Process Manager 2) is a production process manager for Node.js applications. It keeps your Node.js applications running continuously, restarts them if       they crash, and provides monitoring and management tools.
+22. PM2 (Process Manager 2) is a production process manager, a daemon, for Node.js applications. It keeps your Node.js applications running continuously, restarts them if       they crash, and provides monitoring and management tools.
 
     PM2 ensures your Node.js application stays alive in production by:
 
