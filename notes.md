@@ -990,7 +990,7 @@ socket.onerror = (error) => {
 ```
 ---
 
-## **What Will the Frontend Log to the Console?**
+**What Will the Frontend Log to the Console?**
 ```
 Connected to server
 Message from server: Welcome to the server!
@@ -1000,7 +1000,7 @@ Message from server: Hello from server after 2 seconds
 
 ---
 
-## **Explanation of the Flow:**
+**Explanation of the Flow:**
 
 1. **Connection established**
    - Frontend: `socket.onopen` fires → logs "Connected to server"
@@ -1020,7 +1020,7 @@ Message from server: Hello from server after 2 seconds
 
 ---
 
-## **What the Backend Logs to the Console:**
+**What the Backend Logs to the Console:**
 ```
 WebSocket server running on port 9900
 Client connected
@@ -1091,7 +1091,7 @@ ReactDOM.render(<App />, document.body);
 
 ---
 
-## **What Text Content Will Be Generated?**
+*What Text Content Will Be Generated?**
 ```
 Welcome, Sarah!
 Age: 28
@@ -1152,7 +1152,7 @@ ReactDOM.render(<App />, document.body);
 
 ---
 
-## **What Text Content Will Be Generated?**
+**What Text Content Will Be Generated?**
 ```
 User Dashboard
 
@@ -1180,6 +1180,7 @@ Member since: 2021
           // Component remembers which image is selected
         }
         ```
+
     b) Context Hooks: Context lets a component receive information from distant parents without passing it as props react. For example, your app's top-level             component can pass the current UI theme to all components below, no matter how deep.
         ```
         function Button() {
@@ -1187,6 +1188,7 @@ Member since: 2021
           // Can access theme without prop drilling
         }
         ```
+
     c) Ref Hooks: Refs let a component hold some information that isn't used for rendering, like a DOM node or a timeout ID. Unlike with state, updating a ref           does not re-render your component react. Refs are an "escape hatch" from the React paradigm, useful when you need to work with non-React systems, such as         the built-in browser APIs.
         ```
         function Form() {
@@ -1194,6 +1196,7 @@ Member since: 2021
           // Can directly access the input DOM element
         }
         ```
+
     d) Effect Hooks: Effects let a component connect to and synchronize with external systems. This includes dealing with network, browser DOM, animations,               widgets written using a different UI library, and other non-React code
         ```
         function ChatRoom({ roomId }) {
@@ -1205,6 +1208,7 @@ Member since: 2021
           // Connects to external chat system
         }
         ```
+
     e) Performance Hooks: A common way to optimize re-rendering performance is to skip unnecessary work. For example, you can tell React to reuse a cached               calculation or to skip a re-render if the data has not changed since the previous render
         ```
         function TodoList({ todos, tab, theme }) {
@@ -1213,8 +1217,8 @@ Member since: 2021
         }
         ```
 
-17. React routes, uses client side navigation to avoid full page reloads. Routers help with navigation.
-18. The package.json file is the manifest/configuration file for Node.js projects. It contains metadata about your project and manages your project's                 dependencies, scripts, and configuration.
+18. React routes, uses client side navigation to avoid full page reloads. Routers help with navigation.
+19. The package.json file is the manifest/configuration file for Node.js projects. It contains metadata about your project and manages your project's                 dependencies, scripts, and configuration.
     - project metadata - stores basic info about project
     - dependency management - lists packages/libraries project needs
     - scripts - defines commands that can be run with `npm run`
@@ -1226,7 +1230,7 @@ Member since: 2021
 
     package.json is the configuration file that defines your Node.js project, manages its dependencies, and provides scripts for common tasks.
 
-19. The fetch() function is a built-in JavaScript API used to make HTTP requests to servers. It allows you to retrieve (or send) data from/to a URL, such as           fetching data from an API, submitting forms, or uploading files.
+20. The fetch() function is a built-in JavaScript API used to make HTTP requests to servers. It allows you to retrieve (or send) data from/to a URL, such as           fetching data from an API, submitting forms, or uploading files.
       ```
       fetch('https://api.example.com/users')
         .then(response => response.json())  // Parse JSON from response
@@ -1243,7 +1247,7 @@ Member since: 2021
       - Handle responses asynchronously with Promises
       - Work with JSON, text, blobs, and other data formats
    
-20. Node.js is a JavaScript runtime environment that allows you to run JavaScript code outside of a web browser, primarily on servers. It enables developers to       use JavaScript for backend/server-side programming, not just frontend web pages.
+21. Node.js is a JavaScript runtime environment that allows you to run JavaScript code outside of a web browser, primarily on servers. It enables developers to       use JavaScript for backend/server-side programming, not just frontend web pages.
     key concept - javascript everywhere. same language for frontend and backend.
     Node.js does:
       1. runs javascript on the server
@@ -1256,7 +1260,7 @@ Member since: 2021
      handles asynchronous operations
 
 
-21. PM2 (Process Manager 2) is a production process manager for Node.js applications. It keeps your Node.js applications running continuously, restarts them if       they crash, and provides monitoring and management tools.
+22. PM2 (Process Manager 2) is a production process manager for Node.js applications. It keeps your Node.js applications running continuously, restarts them if       they crash, and provides monitoring and management tools.
 
     PM2 ensures your Node.js application stays alive in production by:
 
@@ -1282,7 +1286,7 @@ Member since: 2021
       ✅ Auto-start applications on server reboot
       ✅ Zero-downtime deployments
 
-22. What Vite Does
+23. What Vite Does
     1. Lightning-Fast Development Server
     2. Instant Hot Module Replacement (HMR) - When you save a file, changes appear in the browser instantly without full page reload:
     3. Builds Optimized Production Bundles `npm run build`
