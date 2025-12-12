@@ -773,7 +773,7 @@ colors.addEventListener('change', () =>{
 
 
 
-
+---
 ## Final Notes
 
 1. default port for http/https/ssh - http: port 80, https: port 443, ssh: port 22
@@ -936,11 +936,12 @@ returns:
 ```
 
 7. given a list of users or ids, a query can be used to request a specific data type. findOne will return the first. find or collection.find will return all.
-8. how should user passwords be stored? - NEVER store as plain text, always hash before storing in a database. common way is using bcrypt.
+8. how should user passwords be stored? - NEVER store as plain text, always salt and hash before storing in a database. common way is using bcrypt.
           - encryption is two-way (can be decrypted), DON'T USE ENCRYPTION
           - Hashing is one-way (cannot be reversed) , use this
+          - salt adds random data before hashing, makes each password hash unique, even if users have same password
 
-9. websocket code example:
+10. websocket code example:
 ```
 const WebSocket = require('ws');
 const wss = new WebSocket.Server({ port: 9900 });
